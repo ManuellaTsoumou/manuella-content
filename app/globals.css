@@ -1,24 +1,193 @@
 @import "tailwindcss";
 
-/* Les couleurs et typos de Manuella Content */
+/* ------------------------------------------------------------------
+   Design system de Manuella Content
+   Magazine éditorial luxe + chaleur d'une grande sœur.
+   Aucune couleur en dur dans les composants : tout passe par ces tokens.
+   ------------------------------------------------------------------ */
+
 @theme inline {
-  --color-bordeaux: #5A0F1F;
-  --color-bordeaux-fonce: #3D0814;
-  --color-rose: #E8C9CF;
-  --color-rose-pale: #F3E4E7;
-  --color-poudre: #F7F1F2;
-  --color-encre: #111111;
   --font-titre: var(--font-cormorant), Georgia, serif;
   --font-texte: var(--font-dm-sans), system-ui, sans-serif;
 }
 
+@theme {
+  /* Bordeaux, la couleur signature (700) et ses nuances */
+  --color-bordeaux-50: #fbf3f4;
+  --color-bordeaux-100: #f3e4e7;
+  --color-bordeaux-200: #e8c9cf;
+  --color-bordeaux-300: #d49aa5;
+  --color-bordeaux-500: #8a2a3d;
+  --color-bordeaux-700: #5a0f1f;
+  --color-bordeaux-800: #3d0814;
+  --color-bordeaux-900: #26040c;
+
+  /* Blanc cassé chaud */
+  --color-ivoire: #faf6f1;
+  --color-ivoire-creux: #f3ece4;
+  --color-lin: #e7ddd2;
+  --color-blanc: #fffdfb;
+
+  /* Noir profond */
+  --color-encre: #111111;
+  --color-encre-douce: #6b5f62;
+
+  /* Champagne : réservé aux moments de célébration */
+  --color-champagne-100: #f1e3c4;
+  --color-champagne-400: #d8b878;
+  --color-champagne-700: #8a6a2b;
+
+  /* Une couleur d'accent par pilier */
+  --color-soin: #c2697b;
+  --color-soin-pale: #f6e3e6;
+  --color-mental: #5e3a5c;
+  --color-mental-pale: #ece2ea;
+  --color-evolution: #6f8466;
+  --color-evolution-pale: #e6ebe2;
+
+  /* Rôles : c'est ce que les composants utilisent */
+  --color-fond: var(--color-ivoire);
+  --color-surface: var(--color-blanc);
+  --color-surface-creuse: var(--color-ivoire-creux);
+  --color-texte: var(--color-encre);
+  --color-texte-doux: var(--color-encre-douce);
+  --color-bord: var(--color-lin);
+  --color-accent: var(--color-bordeaux-700);
+  --color-accent-doux: var(--color-bordeaux-100);
+  --color-succes: var(--color-evolution);
+  --color-erreur: var(--color-bordeaux-500);
+
+  /* Échelle typographique */
+  --text-affichage: 3rem;
+  --text-affichage--line-height: 1.02;
+  --text-titre-1: 2.5rem;
+  --text-titre-1--line-height: 1.05;
+  --text-titre-2: 1.75rem;
+  --text-titre-2--line-height: 1.15;
+  --text-titre-3: 1.375rem;
+  --text-titre-3--line-height: 1.2;
+
+  /* Rayons */
+  --radius-champ: 12px;
+  --radius-bouton: 16px;
+  --radius-carte: 24px;
+  --radius-hero: 32px;
+
+  /* Ombres teintées bordeaux, jamais grises */
+  --shadow-douce: 0 1px 2px rgb(58 8 20 / 0.06), 0 4px 16px rgb(58 8 20 / 0.06);
+  --shadow-elevee: 0 12px 40px -12px rgb(58 8 20 / 0.25);
+  --shadow-focus: 0 0 0 4px rgb(138 42 61 / 0.18);
+  --shadow-doree: 0 0 24px rgb(216 184 120 / 0.45);
+
+  /* Courbes (les durées vivent dans lib/animation.ts pour Motion) */
+  --ease-sortie: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-entree: cubic-bezier(0.64, 0, 0.78, 0);
+
+  --animate-reflet: reflet 1.6s var(--ease-sortie) infinite;
+
+  @keyframes reflet {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(100%);
+    }
+  }
+}
+
+/* Jour off : l'app entière s'adoucit */
+[data-ambiance='repos'] {
+  --color-fond: var(--color-evolution-pale);
+  --color-accent: var(--color-evolution);
+  --color-accent-doux: var(--color-ivoire);
+}
+
+@utility surtitre {
+  font-size: 0.6875rem;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+html {
+  background: var(--color-fond);
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
-  background: var(--color-bordeaux);
-  color: var(--color-encre);
+  background: var(--color-fond);
+  color: var(--color-texte);
   font-family: var(--font-texte);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-rose);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-bordeaux-200);
+  color: var(--color-bordeaux-900);
+}
+
+/* ------------------------------------------------------------------
+   Transitions entre pages (React <ViewTransition>)
+   L'ancienne page part vite, la nouvelle arrive en douceur.
+   ------------------------------------------------------------------ */
+
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(.page) {
+  animation: 160ms var(--ease-entree) both fondu-sortie;
+}
+
+::view-transition-new(.page) {
+  animation: 360ms var(--ease-sortie) 120ms both fondu-entree;
+}
+
+::view-transition-group(barre-navigation) {
+  animation: none;
+  z-index: 100;
+}
+
+::view-transition-old(barre-navigation) {
+  display: none;
+}
+
+::view-transition-new(barre-navigation) {
+  animation: none;
+}
+
+@keyframes fondu-sortie {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fondu-entree {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+/* Mouvement réduit demandé par le système : on garde les fondus, on supprime les déplacements */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
 }

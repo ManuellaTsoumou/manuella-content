@@ -3,6 +3,7 @@
 import { useRef, useState, type ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { useToast } from './ui/Toast'
 
 type Props = {
   userId: string
@@ -12,6 +13,7 @@ type Props = {
 
 export default function PhotoProfil({ userId, nom, photoUrl }: Props) {
   const router = useRouter()
+  const toast = useToast()
   const champ = useRef<HTMLInputElement>(null)
   const [envoi, setEnvoi] = useState(false)
   const [erreur, setErreur] = useState('')
@@ -50,6 +52,7 @@ export default function PhotoProfil({ userId, nom, photoUrl }: Props) {
 
     setEnvoi(false)
     router.refresh()
+    toast('Nouvelle photo, nouvelle énergie.')
   }
 
   return (
@@ -59,12 +62,12 @@ export default function PhotoProfil({ userId, nom, photoUrl }: Props) {
         <img
           src={photoUrl}
           alt={`Photo de ${nom}`}
-          className="w-20 h-20 rounded-full object-cover border-2 border-bordeaux"
+          className="size-20 rounded-full object-cover ring-2 ring-accent ring-offset-2 ring-offset-surface"
         />
       ) : (
         <div
           aria-hidden="true"
-          className="w-20 h-20 rounded-full bg-rose-pale border-2 border-bordeaux flex items-center justify-center font-titre text-4xl text-bordeaux"
+          className="size-20 rounded-full bg-accent-doux ring-2 ring-accent ring-offset-2 ring-offset-surface flex items-center justify-center font-titre text-4xl text-accent"
         >
           {nom.charAt(0)}
         </div>
@@ -74,7 +77,7 @@ export default function PhotoProfil({ userId, nom, photoUrl }: Props) {
         type="button"
         onClick={() => champ.current?.click()}
         disabled={envoi}
-        className="text-xs text-bordeaux underline underline-offset-2 disabled:opacity-60 min-h-8"
+        className="text-xs text-accent underline underline-offset-2 disabled:opacity-60 min-h-8"
       >
         {envoi ? 'Envoi…' : photoUrl ? 'Changer ma photo' : 'Ajouter ma photo'}
       </button>
@@ -86,7 +89,7 @@ export default function PhotoProfil({ userId, nom, photoUrl }: Props) {
         className="hidden"
       />
       {erreur && (
-        <p role="alert" className="text-xs text-bordeaux max-w-36 text-center">
+        <p role="alert" className="text-xs text-erreur max-w-36 text-center">
           {erreur}
         </p>
       )}

@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { motion } from 'motion/react'
+import { RESSORTS } from '@/lib/animation'
 
 const LIENS = [
   {
@@ -28,23 +30,31 @@ export default function BarreNavigation() {
   return (
     <nav
       aria-label="Navigation principale"
-      className="fixed bottom-0 inset-x-0 z-10 bg-white rounded-t-3xl pb-[env(safe-area-inset-bottom)]"
+      style={{ viewTransitionName: 'barre-navigation' }}
+      className="fixed bottom-0 inset-x-0 z-30 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
     >
-      <ul className="max-w-md mx-auto grid grid-cols-2">
+      <ul className="max-w-sm mx-auto grid grid-cols-2 gap-1 p-1.5 rounded-full bg-surface/85 backdrop-blur-xl shadow-elevee border border-bord/60">
         {LIENS.map((lien) => {
           const actif = lien.href === '/' ? chemin === '/' : chemin.startsWith(lien.href)
           return (
-            <li key={lien.href}>
+            <li key={lien.href} className="relative">
+              {actif && (
+                <motion.span
+                  layoutId="onglet-actif"
+                  transition={RESSORTS.doux}
+                  className="absolute inset-0 rounded-full bg-accent"
+                />
+              )}
               <Link
                 href={lien.href}
                 aria-current={actif ? 'page' : undefined}
-                className={`flex flex-col items-center gap-1 py-3 text-xs ${
-                  actif ? 'text-bordeaux font-medium' : 'text-neutral-500'
+                className={`relative flex items-center justify-center gap-2 h-12 rounded-full text-sm transition-colors duration-200 ${
+                  actif ? 'text-blanc font-medium' : 'text-texte-doux hover:text-accent'
                 }`}
               >
                 <svg
-                  width="22"
-                  height="22"
+                  width="20"
+                  height="20"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"

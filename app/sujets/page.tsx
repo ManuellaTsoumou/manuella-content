@@ -4,6 +4,14 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { ajouterSujet, decider } from './actions'
 import StatutSujet from '../composants/StatutSujet'
+import TransitionPage from '../composants/animation/TransitionPage'
+import Cascade from '../composants/animation/Cascade'
+import Carte from '../composants/ui/Carte'
+import Champ, { ListeDeroulante } from '../composants/ui/Champ'
+import { BoutonEnvoi } from '../composants/ui/Bouton'
+import FormulaireAction from '../composants/ui/FormulaireAction'
+import EtatVide from '../composants/ui/EtatVide'
+import { SkeletonPage } from '../composants/ui/Skeleton'
 
 type Filtres = Promise<{ theme?: string; statut?: string }>
 
@@ -18,15 +26,11 @@ const LIBELLES_STATUT: Record<string, string> = {
 
 export default function Page({ searchParams }: { searchParams: Filtres }) {
   return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen max-w-md mx-auto px-6 pt-10">
-          <p className="text-rose text-sm">Chargement de ta banque…</p>
-        </main>
-      }
-    >
-      <Banque searchParams={searchParams} />
-    </Suspense>
+    <TransitionPage>
+      <Suspense fallback={<SkeletonPage texte="Chargement de ta banque…" cartes={4} />}>
+        <Banque searchParams={searchParams} />
+      </Suspense>
+    </TransitionPage>
   )
 }
 
@@ -67,23 +71,25 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
   }
 
   const pastille = (actif: boolean) =>
-    `shrink-0 h-9 px-4 rounded-full text-sm flex items-center ${
-      actif ? 'bg-white text-bordeaux font-medium' : 'border border-rose text-white'
+    `shrink-0 h-9 px-4 rounded-full text-sm flex items-center transition-colors duration-200 ${
+      actif
+        ? 'bg-accent text-blanc font-medium shadow-douce'
+        : 'bg-surface border border-bord text-texte-doux hover:border-accent hover:text-accent'
     }`
 
   return (
-    <main className="min-h-screen max-w-md mx-auto pt-7 pb-28">
+    <main className="min-h-dvh max-w-md mx-auto pt-8 pb-32">
       <header className="px-6">
-        <p className="text-rose text-sm">
+        <p className="surtitre text-accent">
           {liste.length} sujet{liste.length > 1 ? 's' : ''}
           {theme ? ` en ${nomsThemes.get(theme) ?? ''}` : ''}
         </p>
-        <h1 className="mt-1 font-titre text-white text-4xl font-semibold leading-tight">
-          Ta banque de sujets
+        <h1 className="mt-2 font-titre text-titre-1 font-medium">
+          Ta banque <em className="text-accent">de sujets</em>
         </h1>
       </header>
 
-      <nav aria-label="Filtrer par thème" className="mt-5 flex gap-2 overflow-x-auto px-4 pb-1">
+      <nav aria-label="Filtrer par thème" className="mt-6 flex gap-2 overflow-x-auto px-5 pb-1">
         <Link href={lien('theme')} className={pastille(!theme)}>
           Tous les thèmes
         </Link>
@@ -94,7 +100,7 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
         ))}
       </nav>
 
-      <nav aria-label="Filtrer par statut" className="mt-2 flex gap-2 overflow-x-auto px-4 pb-1">
+      <nav aria-label="Filtrer par statut" className="mt-2 flex gap-2 overflow-x-auto px-5 pb-1">
         <Link href={lien('statut')} className={pastille(!statut)}>
           En cours
         </Link>
@@ -105,100 +111,91 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
         ))}
       </nav>
 
-      <div className="mt-5 px-4 flex flex-col gap-3">
+      <Cascade key={`${theme ?? ''}-${statut ?? ''}`} className="mt-6 px-5 flex flex-col gap-3">
         {idees.map((sujet) => (
-          <article key={sujet.id} className="bg-white rounded-3xl p-5 flex flex-col gap-3">
-            <p className="text-xs text-neutral-600">
-              Nouvelle idée{sujet.theme_id ? ` en ${nomsThemes.get(sujet.theme_id)}` : ''}
+          <Carte key={sujet.id} className="flex flex-col gap-3">
+            <p className="surtitre text-texte-doux">
+              Nouvelle idée{sujet.theme_id ? ` · ${nomsThemes.get(sujet.theme_id)}` : ''}
             </p>
-            <h2 className="font-titre text-2xl font-semibold leading-tight">
-              <Link href={`/sujets/${sujet.id}`} className="hover:underline">
+            <h2 className="font-titre text-titre-2 font-semibold">
+              <Link
+                href={`/sujets/${sujet.id}`}
+                className="hover:text-accent transition-colors"
+              >
                 {sujet.titre}
               </Link>
             </h2>
             <div className="flex gap-2">
-              <form action={decider} className="flex-1">
+              <FormulaireAction action={decider} messageSucces="Sujet validé. Belle intuition." className="flex-1">
                 <input type="hidden" name="id" value={sujet.id} />
                 <input type="hidden" name="decision" value="valide" />
-                <button type="submit" className="w-full h-11 rounded-full bg-bordeaux text-white text-sm">
-                  Valider
-                </button>
-              </form>
-              <form action={decider} className="flex-1">
+                <BoutonEnvoi pleineLargeur>Valider</BoutonEnvoi>
+              </FormulaireAction>
+              <FormulaireAction
+                action={decider}
+                messageSucces="C’est noté, l’agent retiendra que ce n’était pas pour toi."
+                className="flex-1"
+              >
                 <input type="hidden" name="id" value={sujet.id} />
                 <input type="hidden" name="decision" value="rejete" />
-                <button
-                  type="submit"
-                  className="w-full h-11 rounded-full border border-encre text-encre text-sm"
-                >
-                  Rejeter
-                </button>
-              </form>
+                <BoutonEnvoi variante="secondaire" pleineLargeur>
+                  Mettre de côté
+                </BoutonEnvoi>
+              </FormulaireAction>
             </div>
-          </article>
+          </Carte>
         ))}
 
         {autres.map((sujet) => (
-          <article
+          <Carte
             key={sujet.id}
-            className="bg-white rounded-2xl px-4 py-3 flex justify-between items-center gap-3"
+            rembourrage={false}
+            className="px-4 py-3 flex justify-between items-center gap-3"
           >
             <div className="min-w-0">
               {sujet.theme_id && !theme && (
-                <p className="text-xs text-neutral-600">{nomsThemes.get(sujet.theme_id)}</p>
+                <p className="text-xs text-texte-doux">{nomsThemes.get(sujet.theme_id)}</p>
               )}
               <h2 className="text-[15px] font-medium leading-snug">
-                <Link href={`/sujets/${sujet.id}`} className="hover:underline">
+                <Link href={`/sujets/${sujet.id}`} className="hover:text-accent transition-colors">
                   {sujet.titre}
                 </Link>
               </h2>
             </div>
             <StatutSujet id={sujet.id} statut={sujet.statut} />
-          </article>
+          </Carte>
         ))}
+      </Cascade>
 
-        {liste.length === 0 && (
-          <p className="px-2 text-sm text-rose">
-            Aucun sujet ici pour l&apos;instant. Ajoute ta propre idée juste en dessous, ou change
-            de filtre.
-          </p>
-        )}
-      </div>
+      {liste.length === 0 && (
+        <EtatVide
+          titre="Cette page t’attend encore."
+          texte="Change de filtre, ou note juste en dessous l’idée qui te trotte dans la tête. Les meilleures commencent souvent par une phrase griffonnée."
+        />
+      )}
 
-      <section className="mt-6 mx-4 rounded-3xl border border-rose p-5">
-        <h2 className="font-titre text-white text-2xl font-semibold">Ajouter une idée</h2>
-        <form action={ajouterSujet} className="mt-4 flex flex-col gap-3">
-          <label className="flex flex-col gap-1.5 text-sm text-rose">
-            Ton sujet
-            <input
-              name="titre"
-              required
-              placeholder="La jalousie entre filles"
-              className="h-11 rounded-xl bg-white px-3 text-base text-encre"
-            />
-          </label>
-          <label className="flex flex-col gap-1.5 text-sm text-rose">
-            Thème
-            <select
-              name="theme_id"
-              defaultValue={theme ?? ''}
-              className="h-11 rounded-xl bg-white px-3 text-base text-encre"
-            >
+      <section className="mt-6 mx-5">
+        <Carte ton="creuse">
+          <h2 className="font-titre text-titre-2 font-semibold">Ajouter une idée</h2>
+          <FormulaireAction
+            action={ajouterSujet}
+            messageSucces="Idée enregistrée. Elle t’attend dans ta banque."
+            className="mt-4 flex flex-col gap-3"
+          >
+            <Champ label="Ton sujet (ex. la jalousie entre filles)" name="titre" required />
+            <ListeDeroulante label="Thème" name="theme_id" defaultValue={theme ?? ''}>
               <option value="">Sans thème</option>
               {themes?.map((t) => (
                 <option key={t.id} value={t.id}>
                   {t.nom}
                 </option>
               ))}
-            </select>
-          </label>
-          <button
-            type="submit"
-            className="mt-1 h-12 rounded-full bg-white text-bordeaux text-base font-medium"
-          >
-            Ajouter à ma banque
-          </button>
-        </form>
+            </ListeDeroulante>
+            <BoutonEnvoi taille="grand" pleineLargeur className="mt-1" texteChargement="Enregistrement">
+              Ajouter à ma banque
+            </BoutonEnvoi>
+          </FormulaireAction>
+        </Carte>
       </section>
     </main>
   )

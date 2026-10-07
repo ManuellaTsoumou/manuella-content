@@ -1,6 +1,7 @@
 'use client'
 
 import { changerStatut } from '@/app/sujets/actions'
+import FormulaireAction from './ui/FormulaireAction'
 
 const STATUTS = [
   ['idee', 'Idée'],
@@ -14,7 +15,7 @@ const STATUTS = [
 // Change le statut dès que tu choisis une option, sans bouton à cliquer
 export default function StatutSujet({ id, statut }: { id: string; statut: string }) {
   return (
-    <form action={changerStatut}>
+    <FormulaireAction action={changerStatut} messageSucces="Statut mis à jour.">
       <input type="hidden" name="id" value={id} />
       <label className="sr-only" htmlFor={`statut-${id}`}>
         Statut du sujet
@@ -24,7 +25,7 @@ export default function StatutSujet({ id, statut }: { id: string; statut: string
         name="statut"
         defaultValue={statut}
         onChange={(e) => e.currentTarget.form?.requestSubmit()}
-        className="h-9 rounded-full border border-neutral-300 bg-white px-3 text-xs text-encre"
+        className="h-9 rounded-full border border-bord bg-surface-creuse px-3 text-xs font-medium text-texte outline-none transition-[border-color,box-shadow] duration-200 hover:border-accent focus:border-accent focus:shadow-focus"
       >
         {STATUTS.map(([valeur, label]) => (
           <option key={valeur} value={valeur}>
@@ -32,6 +33,6 @@ export default function StatutSujet({ id, statut }: { id: string; statut: string
           </option>
         ))}
       </select>
-    </form>
+    </FormulaireAction>
   )
 }

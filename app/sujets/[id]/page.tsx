@@ -6,20 +6,20 @@ import { LIBELLES } from '@/lib/agent/fiche'
 import GenerateurFiche from '@/app/composants/GenerateurFiche'
 import CaseApprise from '@/app/composants/CaseApprise'
 import StatutSujet from '@/app/composants/StatutSujet'
+import TransitionPage from '@/app/composants/animation/TransitionPage'
+import Cascade, { Apparition } from '@/app/composants/animation/Cascade'
+import Carte from '@/app/composants/ui/Carte'
+import { SkeletonPage } from '@/app/composants/ui/Skeleton'
 
 type Params = Promise<{ id: string }>
 
 export default function Page({ params }: { params: Params }) {
   return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen max-w-md mx-auto px-6 pt-10">
-          <p className="text-rose text-sm">Chargement de la fiche…</p>
-        </main>
-      }
-    >
-      <FicheSujet params={params} />
-    </Suspense>
+    <TransitionPage>
+      <Suspense fallback={<SkeletonPage texte="Chargement de la fiche…" />}>
+        <FicheSujet params={params} />
+      </Suspense>
+    </TransitionPage>
   )
 }
 
@@ -62,111 +62,124 @@ async function FicheSujet({ params }: { params: Params }) {
   const nbAppris = (apprentissages ?? []).filter((a) => a.appris).length
 
   return (
-    <main className="min-h-screen max-w-md mx-auto px-4 pt-6 pb-28 flex flex-col gap-4">
-      <header className="px-2">
-        <Link href="/sujets" className="text-sm text-rose underline underline-offset-2">
-          Retour à ma banque
-        </Link>
-        {theme && <p className="mt-4 text-sm text-rose">{theme}</p>}
-        <h1 className="mt-1 font-titre text-white text-4xl font-semibold leading-tight">
-          {sujet.titre}
-        </h1>
-        <div className="mt-3">
-          <StatutSujet id={sujet.id} statut={sujet.statut} />
-        </div>
-        {sujet.pourquoi_ca_touche && (
-          <p className="mt-3 text-sm text-rose leading-relaxed">{sujet.pourquoi_ca_touche}</p>
-        )}
-      </header>
-
-      {apprentissages && apprentissages.length > 0 && (
-        <section className="bg-encre rounded-3xl p-5 flex flex-col gap-4">
-          <div className="flex justify-between items-baseline gap-3">
-            <h2 className="font-titre text-white text-2xl font-semibold">À apprendre avant de tourner</h2>
-            <p className="text-sm text-rose shrink-0">
-              {nbAppris} sur {apprentissages.length}
-            </p>
+    <main className="min-h-dvh max-w-md mx-auto px-5 pt-6 pb-32">
+      <Cascade className="flex flex-col gap-4">
+        <Apparition className="px-1">
+          <Link
+            href="/sujets"
+            className="inline-flex items-center gap-1.5 h-9 text-sm text-texte-doux hover:text-accent transition-colors"
+          >
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M15 6l-6 6 6 6" />
+            </svg>
+            Retour à ma banque
+          </Link>
+          {theme && <p className="mt-4 surtitre text-accent">{theme}</p>}
+          <h1 className="mt-2 font-titre text-titre-1 font-medium">{sujet.titre}</h1>
+          <div className="mt-3">
+            <StatutSujet id={sujet.id} statut={sujet.statut} />
           </div>
-          {apprentissages.map((a) => {
-            const sources = (a.sources ?? []) as { titre: string; url: string }[]
-            return (
-              <div key={a.id} className="flex flex-col gap-2 border-t border-neutral-700 pt-4">
-                <CaseApprise id={a.id} appris={a.appris} notion={a.notion} />
-                {a.resume && <p className="text-sm text-neutral-300 leading-relaxed">{a.resume}</p>}
-                {a.a_verifier && (
-                  <p className="text-sm text-rose leading-relaxed">À vérifier : {a.a_verifier}</p>
-                )}
-                {sources.length > 0 && (
-                  <ul className="flex flex-col gap-1">
-                    {sources.map((s) => (
-                      <li key={s.url}>
-                        <a
-                          href={s.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-sm text-white underline underline-offset-2 break-words"
-                        >
-                          {s.titre || s.url}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            )
-          })}
-        </section>
-      )}
+          {sujet.pourquoi_ca_touche && (
+            <p className="mt-4 font-titre italic text-xl text-texte-doux leading-snug">
+              {sujet.pourquoi_ca_touche}
+            </p>
+          )}
+        </Apparition>
 
-      {fiches?.map((f) => (
-        <article key={f.id} className="bg-white rounded-3xl p-5 flex flex-col gap-3">
-          <p className="text-xs text-neutral-600">
-            {LIBELLES.format[f.format as keyof typeof LIBELLES.format]?.split(' (')[0]},{' '}
-            {f.decor ? LIBELLES.decor[f.decor as keyof typeof LIBELLES.decor] : ''},{' '}
-            {f.mode ? LIBELLES.mode[f.mode as keyof typeof LIBELLES.mode] : ''}
-          </p>
-          {f.hook && (
-            <p className="font-titre text-2xl italic leading-snug">« {f.hook} »</p>
-          )}
-          {f.script && (
-            <div>
-              <h3 className="text-sm font-medium text-bordeaux">Script</h3>
-              <p className="mt-1 text-[15px] leading-relaxed whitespace-pre-line">{f.script}</p>
-            </div>
-          )}
-          {f.description && (
-            <div>
-              <h3 className="text-sm font-medium text-bordeaux">Description</h3>
-              <p className="mt-1 text-sm leading-relaxed whitespace-pre-line text-neutral-700">
-                {f.description}
+        {apprentissages && apprentissages.length > 0 && (
+          <Carte ton="encre" className="flex flex-col gap-4">
+            <div className="flex justify-between items-baseline gap-3">
+              <h2 className="font-titre text-titre-2 font-semibold">À apprendre avant de tourner</h2>
+              <p className="text-sm text-bordeaux-200 shrink-0">
+                {nbAppris} sur {apprentissages.length}
               </p>
             </div>
-          )}
-          {f.hashtags && f.hashtags.length > 0 && (
-            <p className="text-sm text-bordeaux">{f.hashtags.map((h: string) => `#${h}`).join(' ')}</p>
-          )}
-        </article>
-      ))}
+            {apprentissages.map((a) => {
+              const sources = (a.sources ?? []) as { titre: string; url: string }[]
+              return (
+                <div key={a.id} className="flex flex-col gap-2 border-t border-blanc/15 pt-4">
+                  <CaseApprise id={a.id} appris={a.appris} notion={a.notion} />
+                  {a.resume && <p className="text-sm text-blanc/75 leading-relaxed">{a.resume}</p>}
+                  {a.a_verifier && (
+                    <p className="text-sm text-bordeaux-200 leading-relaxed">À vérifier : {a.a_verifier}</p>
+                  )}
+                  {sources.length > 0 && (
+                    <ul className="flex flex-col gap-1">
+                      {sources.map((s) => (
+                        <li key={s.url}>
+                          <a
+                            href={s.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-sm text-blanc underline underline-offset-2 decoration-blanc/40 hover:decoration-blanc break-words"
+                          >
+                            {s.titre || s.url}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )
+            })}
+          </Carte>
+        )}
 
-      <GenerateurFiche sujetId={sujet.id} />
+        {fiches?.map((f) => (
+          <Carte key={f.id} className="flex flex-col gap-3">
+            <p className="surtitre text-texte-doux">
+              {LIBELLES.format[f.format as keyof typeof LIBELLES.format]?.split(' (')[0]}
+              {f.decor ? ` · ${LIBELLES.decor[f.decor as keyof typeof LIBELLES.decor]}` : ''}
+              {f.mode ? ` · ${LIBELLES.mode[f.mode as keyof typeof LIBELLES.mode]}` : ''}
+            </p>
+            {f.hook && (
+              <p className="font-titre text-titre-2 italic text-accent">« {f.hook} »</p>
+            )}
+            {f.script && (
+              <div>
+                <h3 className="text-sm font-medium text-accent">Script</h3>
+                <p className="mt-1 text-[15px] leading-relaxed whitespace-pre-line">{f.script}</p>
+              </div>
+            )}
+            {f.description && (
+              <div>
+                <h3 className="text-sm font-medium text-accent">Description</h3>
+                <p className="mt-1 text-sm leading-relaxed whitespace-pre-line text-texte-doux">
+                  {f.description}
+                </p>
+              </div>
+            )}
+            {f.hashtags && f.hashtags.length > 0 && (
+              <p className="text-sm text-accent">{f.hashtags.map((h: string) => `#${h}`).join(' ')}</p>
+            )}
+          </Carte>
+        ))}
 
-      {connexes.length > 0 && (
-        <section className="px-2">
-          <h2 className="font-titre text-white text-2xl font-semibold">Pour continuer</h2>
-          <ul className="mt-2 flex flex-col gap-2">
-            {connexes.map((c) => (
-              <li key={c.id}>
-                <Link
-                  href={`/sujets/${c.id}`}
-                  className="block rounded-2xl border border-rose px-4 py-3 text-white text-sm"
-                >
-                  {c.titre}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+        <Apparition>
+          <GenerateurFiche sujetId={sujet.id} />
+        </Apparition>
+
+        {connexes.length > 0 && (
+          <Apparition className="px-1">
+            <h2 className="font-titre text-titre-2 font-semibold">Pour continuer</h2>
+            <ul className="mt-3 flex flex-col gap-2">
+              {connexes.map((c) => (
+                <li key={c.id}>
+                  <Link
+                    href={`/sujets/${c.id}`}
+                    className="flex items-center justify-between gap-3 rounded-bouton bg-surface border border-bord px-4 py-3 text-sm hover:border-accent hover:text-accent transition-colors"
+                  >
+                    {c.titre}
+                    <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <path d="M9 6l6 6-6 6" />
+                    </svg>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Apparition>
+        )}
+      </Cascade>
     </main>
   )
 }

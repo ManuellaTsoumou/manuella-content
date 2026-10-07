@@ -1,12 +1,14 @@
 import { Suspense } from 'react'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
 import BarreNavigation from './composants/BarreNavigation'
+import Fournisseurs from './composants/Fournisseurs'
 import './globals.css'
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['500', '600'],
+  weight: ['400', '500', '600'],
+  style: ['normal', 'italic'],
   variable: '--font-cormorant',
 })
 
@@ -20,6 +22,11 @@ export const metadata: Metadata = {
   description: 'Ton espace pour créer, apprendre et faire grandir ta communauté',
 }
 
+export const viewport: Viewport = {
+  themeColor: '#faf6f1',
+  viewportFit: 'cover',
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,10 +35,12 @@ export default function RootLayout({
   return (
     <html lang="fr" className={`${cormorant.variable} ${dmSans.variable}`}>
       <body className="antialiased">
-        {children}
-        <Suspense fallback={null}>
-          <BarreNavigation />
-        </Suspense>
+        <Fournisseurs>
+          {children}
+          <Suspense fallback={null}>
+            <BarreNavigation />
+          </Suspense>
+        </Fournisseurs>
       </body>
     </html>
   )

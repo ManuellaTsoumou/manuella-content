@@ -3,6 +3,14 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { majAbonnes, ajouterReseau } from './actions'
 import PhotoProfil from './composants/PhotoProfil'
+import TransitionPage from './composants/animation/TransitionPage'
+import Cascade, { Apparition } from './composants/animation/Cascade'
+import Carte from './composants/ui/Carte'
+import Compteur from './composants/ui/Compteur'
+import Champ, { ListeDeroulante } from './composants/ui/Champ'
+import Bouton, { BoutonEnvoi } from './composants/ui/Bouton'
+import FormulaireAction from './composants/ui/FormulaireAction'
+import { SkeletonPage } from './composants/ui/Skeleton'
 
 const NOMS_RESEAUX: Record<string, string> = {
   tiktok: 'TikTok',
@@ -19,15 +27,11 @@ const NOMS_RESEAUX: Record<string, string> = {
 // dans un bloc Suspense, avec un écran d'attente pendant le chargement.
 export default function Page() {
   return (
-    <Suspense
-      fallback={
-        <main className="min-h-screen max-w-md mx-auto px-6 pt-10">
-          <p className="text-rose text-sm">Chargement de ton espace…</p>
-        </main>
-      }
-    >
-      <Accueil />
-    </Suspense>
+    <TransitionPage>
+      <Suspense fallback={<SkeletonPage texte="Chargement de ton espace…" />}>
+        <Accueil />
+      </Suspense>
+    </TransitionPage>
   )
 }
 
@@ -85,153 +89,135 @@ async function Accueil() {
   )
 
   return (
-    <main className="min-h-screen max-w-md mx-auto px-4 pt-7 pb-28">
-      <header className="px-2 flex justify-between items-end gap-4">
-        <div>
-          <p className="text-rose text-sm first-letter:uppercase">{date}</p>
-          <h1 className="mt-1 font-titre text-white text-4xl font-semibold leading-tight">
-            {salutation}, {nom}
-          </h1>
-        </div>
-        <form action={seDeconnecter}>
-          <button
-            type="submit"
-            className="h-11 px-4 rounded-full border border-rose text-white text-sm"
-          >
-            Me déconnecter
-          </button>
-        </form>
-      </header>
-
-      <section className="mt-6 bg-white rounded-3xl p-5 flex flex-col gap-5">
-        <div className="flex gap-4 items-start">
-          <PhotoProfil userId={user.id} nom={nom} photoUrl={profil?.photo_url ?? null} />
-          <div className="pt-2">
-            <p className="font-titre text-2xl font-semibold">{nom}</p>
-            {profil?.bio && <p className="text-sm text-neutral-600">{profil.bio}</p>}
-            <p className="mt-3 text-sm text-neutral-600">
-              <span className="text-2xl font-medium text-encre">
-                {total.toLocaleString('fr-FR')}
-              </span>{' '}
-              abonnés sur tous tes réseaux
-            </p>
+    <main className="min-h-dvh max-w-md mx-auto px-5 pt-8 pb-32">
+      <Cascade className="flex flex-col gap-4">
+        <Apparition className="flex justify-between items-end gap-4 px-1 mb-2">
+          <div>
+            <p className="surtitre text-accent first-letter:uppercase">{date}</p>
+            <h1 className="mt-2 font-titre text-titre-1 font-medium">
+              {salutation}, <em className="text-accent">{nom}</em>
+            </h1>
           </div>
-        </div>
+          <form action={seDeconnecter}>
+            <Bouton type="submit" variante="fantome" taille="petit">
+              Me déconnecter
+            </Bouton>
+          </form>
+        </Apparition>
 
-        <div className="flex flex-col gap-3">
-          {listeReseaux.map((reseau) => {
-            const progression = Math.min(
-              100,
-              Math.round((reseau.abonnes / reseau.objectif) * 100)
-            )
-            const objectifAtteint = reseau.abonnes >= reseau.objectif
-            return (
-              <div key={reseau.id} className="bg-poudre rounded-2xl p-4">
-                <div className="flex justify-between items-baseline gap-2">
-                  <p className="text-sm text-neutral-600">
-                    {NOMS_RESEAUX[reseau.plateforme] ?? reseau.plateforme} {reseau.pseudo}
-                  </p>
-                  <p className="text-xs text-bordeaux">
-                    {objectifAtteint ? 'Objectif atteint' : `${progression} %`}
-                  </p>
-                </div>
-                <p className="mt-1 text-2xl font-medium">
-                  {reseau.abonnes.toLocaleString('fr-FR')}
-                  <span className="text-sm font-normal text-neutral-600">
-                    {' '}
-                    / {reseau.objectif.toLocaleString('fr-FR')} abonnés
-                  </span>
-                </p>
-                <div className="mt-3 h-1.5 rounded-full bg-rose-pale">
-                  <div
-                    className="h-1.5 rounded-full bg-bordeaux"
-                    style={{ width: `${progression}%` }}
-                  />
-                </div>
+        <Carte className="flex flex-col gap-5">
+          <div className="flex gap-4 items-start">
+            <PhotoProfil userId={user.id} nom={nom} photoUrl={profil?.photo_url ?? null} />
+            <div className="pt-2">
+              <p className="font-titre text-titre-2 font-semibold">{nom}</p>
+              {profil?.bio && <p className="text-sm text-texte-doux">{profil.bio}</p>}
+              <p className="mt-3 text-sm text-texte-doux">
+                <Compteur valeur={total} className="text-2xl font-medium text-texte" /> abonnés sur
+                tous tes réseaux
+              </p>
+            </div>
+          </div>
 
-                <form action={majAbonnes} className="mt-4 flex gap-2">
-                  <input type="hidden" name="id" value={reseau.id} />
-                  <label className="sr-only" htmlFor={`abonnes-${reseau.id}`}>
-                    Nouveau nombre d&apos;abonnés sur{' '}
-                    {NOMS_RESEAUX[reseau.plateforme] ?? reseau.plateforme}
-                  </label>
-                  <input
-                    id={`abonnes-${reseau.id}`}
-                    name="abonnes"
-                    type="number"
-                    min={0}
-                    required
-                    defaultValue={reseau.abonnes}
-                    className="h-11 min-w-0 flex-1 rounded-xl border border-neutral-300 bg-white px-3 text-base focus:border-bordeaux focus:outline-none"
-                  />
-                  <button
-                    type="submit"
-                    className="h-11 px-4 rounded-full bg-bordeaux text-white text-sm shrink-0"
+          <div className="flex flex-col gap-3">
+            {listeReseaux.map((reseau) => {
+              const progression = Math.min(
+                100,
+                Math.round((reseau.abonnes / reseau.objectif) * 100)
+              )
+              const objectifAtteint = reseau.abonnes >= reseau.objectif
+              const plateforme = NOMS_RESEAUX[reseau.plateforme] ?? reseau.plateforme
+              return (
+                <div key={reseau.id} className="bg-surface-creuse rounded-bouton p-4">
+                  <div className="flex justify-between items-baseline gap-2">
+                    <p className="text-sm text-texte-doux">
+                      {plateforme} {reseau.pseudo}
+                    </p>
+                    <p className="text-xs font-medium text-accent">
+                      {objectifAtteint ? 'Objectif atteint' : `${progression} %`}
+                    </p>
+                  </div>
+                  <p className="mt-1 text-2xl font-medium">
+                    <Compteur valeur={reseau.abonnes} />
+                    <span className="text-sm font-normal text-texte-doux">
+                      {' '}
+                      / {reseau.objectif.toLocaleString('fr-FR')} abonnés
+                    </span>
+                  </p>
+                  <div className="mt-3 h-1.5 rounded-full bg-bordeaux-100 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-accent origin-left"
+                      style={{ width: `${progression}%` }}
+                    />
+                  </div>
+
+                  <FormulaireAction
+                    action={majAbonnes}
+                    messageSucces={`${plateforme} est à jour.`}
+                    className="mt-4 flex gap-2 items-start"
                   >
-                    Mettre à jour
-                  </button>
-                </form>
-              </div>
-            )
-          })}
-        </div>
-      </section>
+                    <input type="hidden" name="id" value={reseau.id} />
+                    <Champ
+                      label={`Abonnés sur ${plateforme}`}
+                      name="abonnes"
+                      type="number"
+                      inputMode="numeric"
+                      min={0}
+                      required
+                      defaultValue={reseau.abonnes}
+                      className="min-w-0 flex-1"
+                    />
+                    <BoutonEnvoi className="h-14 shrink-0" texteChargement="Enregistrement">
+                      Mettre à jour
+                    </BoutonEnvoi>
+                  </FormulaireAction>
+                </div>
+              )
+            })}
+          </div>
+        </Carte>
 
-      {disponibles.length > 0 && (
-        <section className="mt-4 rounded-3xl border border-rose p-5">
-          <h2 className="font-titre text-white text-2xl font-semibold">Ajouter un réseau</h2>
-          <p className="mt-1 text-sm text-rose">
-            Chaque nouveau réseau commence avec l&apos;objectif des 10 000 abonnés.
-          </p>
-          <form action={ajouterReseau} className="mt-4 flex flex-col gap-3">
-            <label className="flex flex-col gap-1.5 text-sm text-rose">
-              Réseau
-              <select
-                name="plateforme"
-                required
-                className="h-11 rounded-xl bg-white px-3 text-base text-encre"
-              >
+        {disponibles.length > 0 && (
+          <Carte ton="creuse">
+            <h2 className="font-titre text-titre-2 font-semibold">Ajouter un réseau</h2>
+            <p className="mt-1 text-sm text-texte-doux">
+              Chaque nouveau réseau commence avec l&apos;objectif des 10 000 abonnés.
+            </p>
+            <FormulaireAction
+              action={ajouterReseau}
+              messageSucces="Nouveau réseau ajouté. On y va ensemble."
+              className="mt-4 flex flex-col gap-3"
+            >
+              <ListeDeroulante label="Réseau" name="plateforme" required>
                 {disponibles.map((p) => (
                   <option key={p} value={p}>
                     {NOMS_RESEAUX[p]}
                   </option>
                 ))}
-              </select>
-            </label>
-            <label className="flex flex-col gap-1.5 text-sm text-rose">
-              Pseudo
-              <input
-                name="pseudo"
-                required
-                defaultValue="@lady.manuella_"
-                className="h-11 rounded-xl bg-white px-3 text-base text-encre"
-              />
-            </label>
-            <label className="flex flex-col gap-1.5 text-sm text-rose">
-              Abonnés actuels
-              <input
+              </ListeDeroulante>
+              <Champ label="Pseudo" name="pseudo" required defaultValue="@lady.manuella_" />
+              <Champ
+                label="Abonnés actuels"
                 name="abonnes"
                 type="number"
+                inputMode="numeric"
                 min={0}
                 defaultValue={0}
-                className="h-11 rounded-xl bg-white px-3 text-base text-encre"
               />
-            </label>
-            <button
-              type="submit"
-              className="mt-1 h-12 rounded-full bg-white text-bordeaux text-base font-medium"
-            >
-              Ajouter ce réseau
-            </button>
-          </form>
-        </section>
-      )}
+              <BoutonEnvoi taille="grand" pleineLargeur className="mt-1" texteChargement="Ajout en cours">
+                Ajouter ce réseau
+              </BoutonEnvoi>
+            </FormulaireAction>
+          </Carte>
+        )}
 
-      <p className="mt-6 px-2 text-sm text-rose">
-        {nombreThemes
-          ? `Ta base répond : ${nombreThemes} thèmes sont prêts pour ta banque de sujets.`
-          : 'Ta base ne renvoie aucun thème pour l’instant. Vérifie que tu as bien lancé la dernière partie du fichier SQL.'}
-      </p>
+        <Apparition>
+          <p className="px-1 text-sm text-texte-doux">
+            {nombreThemes
+              ? `Ta base répond : ${nombreThemes} thèmes sont prêts pour ta banque de sujets.`
+              : 'Ta base ne renvoie aucun thème pour l’instant. Vérifie que tu as bien lancé la dernière partie du fichier SQL.'}
+          </p>
+        </Apparition>
+      </Cascade>
     </main>
   )
 }
