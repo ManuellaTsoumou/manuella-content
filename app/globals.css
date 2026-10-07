@@ -1,26 +1,24 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* Les couleurs et typos de Manuella Content */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bordeaux: #5A0F1F;
+  --color-bordeaux-fonce: #3D0814;
+  --color-rose: #E8C9CF;
+  --color-rose-pale: #F3E4E7;
+  --color-poudre: #F7F1F2;
+  --color-encre: #111111;
+  --font-titre: var(--font-cormorant), Georgia, serif;
+  --font-texte: var(--font-dm-sans), system-ui, sans-serif;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bordeaux);
+  color: var(--color-encre);
+  font-family: var(--font-texte);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-rose);
+  outline-offset: 2px;
 }
