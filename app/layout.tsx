@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
 import BarreNavigation from './composants/BarreNavigation'
@@ -28,7 +29,9 @@ export default function RootLayout({
     <html lang="fr" className={`${cormorant.variable} ${dmSans.variable}`}>
       <body className="antialiased">
         {children}
-        <BarreNavigation />
+        <Suspense fallback={null}>
+          <BarreNavigation />
+        </Suspense>
       </body>
     </html>
   )

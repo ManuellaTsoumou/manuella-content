@@ -111,7 +111,11 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
             <p className="text-xs text-neutral-600">
               Nouvelle idée{sujet.theme_id ? ` en ${nomsThemes.get(sujet.theme_id)}` : ''}
             </p>
-            <h2 className="font-titre text-2xl font-semibold leading-tight">{sujet.titre}</h2>
+            <h2 className="font-titre text-2xl font-semibold leading-tight">
+              <Link href={`/sujets/${sujet.id}`} className="hover:underline">
+                {sujet.titre}
+              </Link>
+            </h2>
             <div className="flex gap-2">
               <form action={decider} className="flex-1">
                 <input type="hidden" name="id" value={sujet.id} />
@@ -143,7 +147,11 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
               {sujet.theme_id && !theme && (
                 <p className="text-xs text-neutral-600">{nomsThemes.get(sujet.theme_id)}</p>
               )}
-              <h2 className="text-[15px] font-medium leading-snug">{sujet.titre}</h2>
+              <h2 className="text-[15px] font-medium leading-snug">
+                <Link href={`/sujets/${sujet.id}`} className="hover:underline">
+                  {sujet.titre}
+                </Link>
+              </h2>
             </div>
             <StatutSujet id={sujet.id} statut={sujet.statut} />
           </article>
