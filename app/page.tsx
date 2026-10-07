@@ -85,7 +85,7 @@ async function Accueil() {
   )
 
   return (
-    <main className="min-h-screen max-w-md mx-auto px-4 pt-7 pb-12">
+    <main className="min-h-screen max-w-md mx-auto px-4 pt-7 pb-28">
       <header className="px-2 flex justify-between items-end gap-4">
         <div>
           <p className="text-rose text-sm first-letter:uppercase">{date}</p>
