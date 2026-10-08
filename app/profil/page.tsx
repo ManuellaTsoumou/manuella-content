@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
+import { connection } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { PHOTO_MANUELLA } from '@/lib/marque'
 import { majAbonnes, ajouterReseau, seDeconnecter } from '../actions'
@@ -38,6 +39,7 @@ export default function Page() {
 }
 
 async function Profil() {
+  await connection()
   const supabase = await createClient()
   const {
     data: { user },

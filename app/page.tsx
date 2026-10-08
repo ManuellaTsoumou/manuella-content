@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
+import { connection } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import {
   dateEnToutesLettres,
@@ -41,6 +42,8 @@ type LigneCalendrier = {
 }
 
 async function DonneesDuJour() {
+  // La date et l'heure de Paris changent à chaque visite : rien ici n'est pré-calculé
+  await connection()
   const supabase = await createClient()
   const {
     data: { user },

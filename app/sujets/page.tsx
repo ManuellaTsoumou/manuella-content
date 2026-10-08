@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
+import { connection } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { heureParis, jourParis, salutation } from '@/lib/dates'
 import { estPilier, numero, type Format } from '@/lib/contenu'
@@ -33,6 +34,8 @@ export default function Page() {
 type LignePlanning = { sujet_id: string | null; fiche: { sujet_id: string } | null }
 
 async function DonneesBibliotheque() {
+  // La salutation et le planning dépendent de l'heure de Paris : rien ici n'est pré-calculé
+  await connection()
   const supabase = await createClient()
   const {
     data: { user },
