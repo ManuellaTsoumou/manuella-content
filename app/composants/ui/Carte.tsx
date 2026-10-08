@@ -2,8 +2,10 @@
 
 import { motion, type HTMLMotionProps } from 'motion/react'
 import { RESSORTS, apparition, appui, survol } from '@/lib/animation'
+import type { Pilier } from '@/lib/contenu'
 
-export type Pilier = 'soin' | 'mental' | 'evoluer'
+export { NOMS_PILIERS, type Pilier } from '@/lib/contenu'
+
 type Ton = 'surface' | 'poudre' | Pilier
 
 // surface : .s-card / .p-card ; poudre : .card-off ; piliers : tuiles et cartes de suggestion
@@ -46,10 +48,4 @@ export function NumeroFiligrane({ numero, className = 'text-[120px] -right-1 -bo
       {numero}
     </span>
   )
-}
-
-export const NOMS_PILIERS: Record<Pilier, string> = {
-  soin: 'Soin de soi',
-  mental: 'Me construire',
-  evoluer: 'Évoluer',
 }

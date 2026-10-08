@@ -55,7 +55,7 @@ const ONGLETS: Onglet[] = [
   },
   {
     label: 'Profil',
-    bientot: 'Ton profil arrive bientôt',
+    href: '/profil',
     icone: (
       <>
         <circle cx="12" cy="8" r="4" />

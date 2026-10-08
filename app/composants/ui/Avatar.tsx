@@ -13,6 +13,8 @@ type Props = {
   priorite?: boolean
   // Permet de réduire la taille selon l'écran (ex. max-[360px]:size-[108px])
   className?: string
+  // Photo choisie dans le Profil (Supabase) ; sinon celle de public/images
+  src?: string
 }
 
 // La photo de Manuella dans un anneau doré qui tourne lentement.
@@ -24,6 +26,7 @@ export default function Avatar({
   ombre = false,
   priorite = false,
   className = '',
+  src = PHOTO_MANUELLA,
 }: Props) {
   const grand = taille >= 100
   const animation = { animationDuration: `${duree}s` }
@@ -42,7 +45,16 @@ export default function Avatar({
           surFond === 'bordeaux' ? 'border-bordeaux' : 'border-fond'
         }`}
       >
-        <Image src={PHOTO_MANUELLA} alt="" fill sizes={`${taille}px`} priority={priorite} className="object-cover" />
+        <Image
+          src={src}
+          alt=""
+          fill
+          sizes={`${taille}px`}
+          priority={priorite}
+          // Les photos stockées sur Supabase sont déjà servies à la bonne taille
+          unoptimized={src.startsWith('http')}
+          className="object-cover"
+        />
       </span>
     </div>
   )

@@ -1,27 +1,22 @@
 import { Suspense } from 'react'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { majAbonnes, ajouterReseau } from './actions'
-import PhotoProfil from './composants/PhotoProfil'
+import {
+  dateEnToutesLettres,
+  decalerJour,
+  heureParis,
+  jourDeLAnnee,
+  jourParis,
+  joursDeLaSemaine,
+  salutation,
+  serieDeJours,
+} from '@/lib/dates'
+import { PHRASES_DU_JOUR, estPilier, numero, type Format, type Pilier } from '@/lib/contenu'
+import { classerSuggestions, type SujetCandidat } from '@/lib/suggestions'
+import { PHOTO_MANUELLA } from '@/lib/marque'
 import TransitionPage from './composants/animation/TransitionPage'
-import Cascade, { Apparition } from './composants/animation/Cascade'
-import Carte from './composants/ui/Carte'
-import Compteur from './composants/ui/Compteur'
-import Champ, { ListeDeroulante } from './composants/ui/Champ'
-import Bouton, { BoutonEnvoi } from './composants/ui/Bouton'
-import FormulaireAction from './composants/ui/FormulaireAction'
 import { SkeletonPage } from './composants/ui/Skeleton'
-
-const NOMS_RESEAUX: Record<string, string> = {
-  tiktok: 'TikTok',
-  instagram: 'Instagram',
-  youtube: 'YouTube',
-  snapchat: 'Snapchat',
-  facebook: 'Facebook',
-  x: 'X',
-  pinterest: 'Pinterest',
-  autre: 'Autre',
-}
+import Accueil, { type DonneesAccueil, type ContenuPrevu } from './composants/accueil/Accueil'
 
 // Next.js 16 (Cache Components) : les données personnelles se chargent
 // dans un bloc Suspense, avec un écran d'attente pendant le chargement.
@@ -29,195 +24,145 @@ export default function Page() {
   return (
     <TransitionPage>
       <Suspense fallback={<SkeletonPage texte="Chargement de ton espace…" />}>
-        <Accueil />
+        <DonneesDuJour />
       </Suspense>
     </TransitionPage>
   )
 }
 
-async function Accueil() {
+type ThemeLie = { nom: string; pilier: string | null; ordre: number | null } | null
+type SujetLie = { id: string; titre: string; format: string | null; themes: ThemeLie } | null
+type LigneCalendrier = {
+  id: string
+  date_prevue: string
+  heure: string | null
+  sujet: SujetLie
+  fiche: { format: string | null; sujet: SujetLie } | null
+}
+
+async function DonneesDuJour() {
   const supabase = await createClient()
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
   if (!user) redirect('/connexion')
 
-  const { data: profil } = await supabase
-    .from('profil')
-    .select('nom, bio, photo_url')
-    .eq('id', user.id)
-    .single()
+  const aujourdhui = jourParis()
+  const semaine = joursDeLaSemaine(aujourdhui)
+  const lundi = semaine[0]
+  const dimanche = semaine[6]
+  const depuis = decalerJour(aujourdhui, -120)
 
-  const { data: reseaux } = await supabase
-    .from('reseaux')
-    .select('id, plateforme, pseudo, abonnes, objectif')
-    .order('abonnes', { ascending: false })
+  const [profil, reseaux, joursOff, calendrier, candidats, publies, sujetsCrees, fichesCreees, idees] =
+    await Promise.all([
+      supabase.from('profil').select('nom, photo_url').eq('id', user.id).single(),
+      supabase.from('reseaux').select('id, plateforme, pseudo, abonnes, objectif').order('abonnes', { ascending: false }),
+      supabase.from('jours_off').select('jour').gte('jour', lundi).lte('jour', dimanche),
+      // Tout ce qui est prévu à partir de lundi : la semaine affichée + ce qui est déjà planifié plus tard
+      supabase
+        .from('calendrier')
+        .select(
+          'id, date_prevue, heure, sujet:sujet_id(id, titre, format, themes(nom, pilier, ordre)), fiche:fiche_id(format, sujet:sujet_id(id, titre, format, themes(nom, pilier, ordre)))'
+        )
+        .gte('date_prevue', lundi)
+        .order('date_prevue')
+        .order('heure', { nullsFirst: false }),
+      supabase
+        .from('sujets')
+        .select('id, titre, statut, format, themes(nom, pilier, ordre)')
+        .in('statut', ['idee', 'valide', 'a_apprendre']),
+      supabase
+        .from('sujets')
+        .select('format, date_publication, themes(pilier)')
+        .gte('date_publication', `${depuis}T00:00:00Z`)
+        .order('date_publication', { ascending: false }),
+      supabase.from('sujets').select('created_at').gte('created_at', `${depuis}T00:00:00Z`),
+      supabase.from('fiches').select('created_at').gte('created_at', `${depuis}T00:00:00Z`),
+      supabase.from('sujets').select('*', { count: 'exact', head: true }).eq('statut', 'idee'),
+    ])
 
-  const { count: nombreThemes } = await supabase
-    .from('themes')
-    .select('*', { count: 'exact', head: true })
+  // --- Planning ---
+  const lignes = (calendrier.data ?? []) as unknown as LigneCalendrier[]
+  const sujetDe = (l: LigneCalendrier) => l.sujet ?? l.fiche?.sujet ?? null
+  const prevus = new Set(lignes.map((l) => sujetDe(l)?.id).filter(Boolean))
+  const offs = new Set((joursOff.data ?? []).map((j) => j.jour as string))
 
-  async function seDeconnecter() {
-    'use server'
-    const supabase = await createClient()
-    await supabase.auth.signOut()
-    redirect('/connexion')
+  const contenusDuJour = (jour: string): ContenuPrevu[] =>
+    lignes
+      .filter((l) => l.date_prevue === jour)
+      .map((l) => {
+        const s = sujetDe(l)
+        return {
+          id: l.id,
+          heure: l.heure ? l.heure.slice(0, 5) : null,
+          titre: s?.titre ?? 'Contenu sans titre',
+          format: ((l.fiche?.format ?? s?.format) as Format | null) ?? null,
+        }
+      })
+
+  // --- Série : sujet créé, fiche créée ou contenu publié (un contenu simplement prévu ne compte pas) ---
+  const publiesListe = (publies.data ?? []) as unknown as { format: string | null; date_publication: string; themes: ThemeLie }[]
+  const joursActifs = [
+    ...(sujetsCrees.data ?? []).map((s) => jourParis(s.created_at)),
+    ...(fichesCreees.data ?? []).map((f) => jourParis(f.created_at)),
+    ...publiesListe.map((s) => jourParis(s.date_publication)),
+  ]
+
+  // --- Suggestions du jour ---
+  const lignesSemaine = lignes.filter((l) => l.date_prevue <= dimanche)
+  const publiesSemaine = publiesListe.filter((s) => jourParis(s.date_publication) >= lundi)
+  const piliersDeLaSemaine = [
+    ...lignesSemaine.map((l) => sujetDe(l)?.themes?.pilier),
+    ...publiesSemaine.map((s) => s.themes?.pilier),
+  ].map((p) => (estPilier(p) ? p : null))
+  const formatsRecents = [
+    ...[...lignesSemaine].reverse().map((l) => l.fiche?.format ?? sujetDe(l)?.format),
+    ...publiesListe.map((s) => s.format),
+  ] as (Format | null)[]
+
+  const sujets = ((candidats.data ?? []) as unknown as {
+    id: string
+    titre: string
+    statut: string
+    format: string | null
+    themes: ThemeLie
+  }[])
+    .filter((s) => !prevus.has(s.id))
+    .map<SujetCandidat>((s) => ({
+      id: s.id,
+      titre: s.titre,
+      statut: s.statut,
+      format: (s.format as Format | null) ?? null,
+      pilier: estPilier(s.themes?.pilier) ? (s.themes!.pilier as Pilier) : null,
+      theme: s.themes?.nom ?? null,
+      numero: numero(s.themes?.ordre),
+    }))
+
+  const donnees: DonneesAccueil = {
+    nom: profil.data?.nom ?? 'Manuella',
+    photo: profil.data?.photo_url ?? PHOTO_MANUELLA,
+    date: dateEnToutesLettres(aujourdhui),
+    salutation: salutation(heureParis()),
+    phrase: PHRASES_DU_JOUR[jourDeLAnnee(aujourdhui) % PHRASES_DU_JOUR.length],
+    serie: serieDeJours(joursActifs, aujourdhui),
+    jourOff: offs.has(aujourdhui),
+    ideesEnAttente: idees.count ?? 0,
+    suggestions: classerSuggestions(sujets, { piliersDeLaSemaine, formatsRecents, jour: aujourdhui }).slice(0, 20),
+    semaine: semaine.map((jour) => ({
+      jour,
+      numero: Number(jour.slice(8)),
+      off: offs.has(jour),
+      contenus: contenusDuJour(jour),
+    })),
+    aujourdhui,
+    reseaux: (reseaux.data ?? []).map((r) => ({
+      id: r.id as string,
+      plateforme: r.plateforme as string,
+      pseudo: r.pseudo as string,
+      abonnes: r.abonnes as number,
+      objectif: r.objectif as number,
+    })),
   }
 
-  const maintenant = new Date()
-  const date = new Intl.DateTimeFormat('fr-FR', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    timeZone: 'Europe/Paris',
-  }).format(maintenant)
-  const heure = Number(
-    new Intl.DateTimeFormat('fr-FR', {
-      hour: 'numeric',
-      hour12: false,
-      timeZone: 'Europe/Paris',
-    }).format(maintenant)
-  )
-  const salutation = heure >= 18 || heure < 5 ? 'Bonsoir' : 'Bonjour'
-  const nom = profil?.nom ?? 'Manuella'
-
-  const listeReseaux = reseaux ?? []
-  const total = listeReseaux.reduce((somme, r) => somme + r.abonnes, 0)
-  const disponibles = Object.keys(NOMS_RESEAUX).filter(
-    (p) => !listeReseaux.some((r) => r.plateforme === p)
-  )
-
-  return (
-    <main className="min-h-dvh max-w-md mx-auto px-5 pt-8 pb-32">
-      <Cascade className="flex flex-col gap-4">
-        <Apparition className="flex justify-between items-end gap-4 px-1 mb-2">
-          <div>
-            <p className="surtitre text-bordeaux first-letter:uppercase">{date}</p>
-            <h1 className="mt-2 font-titre text-titre-1 font-medium">
-              {salutation}, <em className="text-bordeaux">{nom}</em>
-            </h1>
-          </div>
-          <form action={seDeconnecter}>
-            <Bouton type="submit" variante="fantome" taille="petit">
-              Me déconnecter
-            </Bouton>
-          </form>
-        </Apparition>
-
-        <Carte className="flex flex-col gap-5">
-          <div className="flex gap-4 items-start">
-            <PhotoProfil userId={user.id} nom={nom} photoUrl={profil?.photo_url ?? null} />
-            <div className="pt-2">
-              <p className="font-titre text-titre-2 font-semibold">{nom}</p>
-              {profil?.bio && <p className="text-sm text-texte-doux">{profil.bio}</p>}
-              <p className="mt-3 text-sm text-texte-doux">
-                <Compteur valeur={total} className="text-2xl font-medium text-texte" /> abonnés sur
-                tous tes réseaux
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            {listeReseaux.map((reseau) => {
-              const progression = Math.min(
-                100,
-                Math.round((reseau.abonnes / reseau.objectif) * 100)
-              )
-              const objectifAtteint = reseau.abonnes >= reseau.objectif
-              const plateforme = NOMS_RESEAUX[reseau.plateforme] ?? reseau.plateforme
-              return (
-                <div key={reseau.id} className="bg-poudre rounded-bouton p-4">
-                  <div className="flex justify-between items-baseline gap-2">
-                    <p className="text-sm text-texte-doux">
-                      {plateforme} {reseau.pseudo}
-                    </p>
-                    <p className="text-xs font-medium text-bordeaux">
-                      {objectifAtteint ? 'Objectif atteint' : `${progression} %`}
-                    </p>
-                  </div>
-                  <p className="mt-1 text-2xl font-medium">
-                    <Compteur valeur={reseau.abonnes} />
-                    <span className="text-sm font-normal text-texte-doux">
-                      {' '}
-                      / {reseau.objectif.toLocaleString('fr-FR')} abonnés
-                    </span>
-                  </p>
-                  <div className="mt-3 h-1.5 rounded-full bg-poudre overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-bordeaux origin-left"
-                      style={{ width: `${progression}%` }}
-                    />
-                  </div>
-
-                  <FormulaireAction
-                    action={majAbonnes}
-                    messageSucces={`${plateforme} est à jour.`}
-                    className="mt-4 flex gap-2 items-start"
-                  >
-                    <input type="hidden" name="id" value={reseau.id} />
-                    <Champ
-                      label={`Abonnés sur ${plateforme}`}
-                      name="abonnes"
-                      type="number"
-                      inputMode="numeric"
-                      min={0}
-                      required
-                      defaultValue={reseau.abonnes}
-                      className="min-w-0 flex-1"
-                    />
-                    <BoutonEnvoi className="h-14 shrink-0" texteChargement="Enregistrement">
-                      Mettre à jour
-                    </BoutonEnvoi>
-                  </FormulaireAction>
-                </div>
-              )
-            })}
-          </div>
-        </Carte>
-
-        {disponibles.length > 0 && (
-          <Carte ton="poudre">
-            <h2 className="font-titre text-titre-2 font-semibold">Ajouter un réseau</h2>
-            <p className="mt-1 text-sm text-texte-doux">
-              Chaque nouveau réseau commence avec l&apos;objectif des 10 000 abonnés.
-            </p>
-            <FormulaireAction
-              action={ajouterReseau}
-              messageSucces="Nouveau réseau ajouté. On y va ensemble."
-              className="mt-4 flex flex-col gap-3"
-            >
-              <ListeDeroulante label="Réseau" name="plateforme" required>
-                {disponibles.map((p) => (
-                  <option key={p} value={p}>
-                    {NOMS_RESEAUX[p]}
-                  </option>
-                ))}
-              </ListeDeroulante>
-              <Champ label="Pseudo" name="pseudo" required defaultValue="@lady.manuella_" />
-              <Champ
-                label="Abonnés actuels"
-                name="abonnes"
-                type="number"
-                inputMode="numeric"
-                min={0}
-                defaultValue={0}
-              />
-              <BoutonEnvoi taille="grand" pleineLargeur className="mt-1" texteChargement="Ajout en cours">
-                Ajouter ce réseau
-              </BoutonEnvoi>
-            </FormulaireAction>
-          </Carte>
-        )}
-
-        <Apparition>
-          <p className="px-1 text-sm text-texte-doux">
-            {nombreThemes
-              ? `Ta base répond : ${nombreThemes} thèmes sont prêts pour ta banque de sujets.`
-              : 'Ta base ne renvoie aucun thème pour l’instant. Vérifie que tu as bien lancé la dernière partie du fichier SQL.'}
-          </p>
-        </Apparition>
-      </Cascade>
-    </main>
-  )
+  return <Accueil donnees={donnees} />
 }

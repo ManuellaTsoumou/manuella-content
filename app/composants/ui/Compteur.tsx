@@ -11,10 +11,13 @@ const FORMAT = new Intl.NumberFormat('fr-FR')
 export default function Compteur({
   valeur,
   duree = 1.6,
+  delai = 0,
   className = '',
 }: {
   valeur: number
   duree?: number
+  // Attente avant de commencer (pour suivre une chorégraphie d'arrivée)
+  delai?: number
   className?: string
 }) {
   const ref = useRef<HTMLSpanElement>(null)
@@ -30,6 +33,7 @@ export default function Compteur({
       return
     }
     const controles = animate(dejaVu.current, valeur, {
+      delay: dejaVu.current === 0 ? delai : 0,
       duration: duree,
       ease: COURBES.power3,
       onUpdate: (v) => {
@@ -38,7 +42,7 @@ export default function Compteur({
     })
     dejaVu.current = valeur
     return () => controles.stop()
-  }, [valeur, visible, reduit, duree])
+  }, [valeur, visible, reduit, duree, delai])
 
   return (
     <span className={className}>
