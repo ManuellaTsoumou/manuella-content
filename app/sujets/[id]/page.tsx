@@ -67,14 +67,14 @@ async function FicheSujet({ params }: { params: Params }) {
         <Apparition className="px-1">
           <Link
             href="/sujets"
-            className="inline-flex items-center gap-1.5 h-9 text-sm text-texte-doux hover:text-accent transition-colors"
+            className="inline-flex items-center gap-1.5 h-9 text-sm text-texte-doux hover:text-bordeaux transition-colors"
           >
             <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8">
               <path d="M15 6l-6 6 6 6" />
             </svg>
             Retour à ma banque
           </Link>
-          {theme && <p className="mt-4 surtitre text-accent">{theme}</p>}
+          {theme && <p className="mt-4 surtitre text-bordeaux">{theme}</p>}
           <h1 className="mt-2 font-titre text-titre-1 font-medium">{sujet.titre}</h1>
           <div className="mt-3">
             <StatutSujet id={sujet.id} statut={sujet.statut} />
@@ -87,10 +87,10 @@ async function FicheSujet({ params }: { params: Params }) {
         </Apparition>
 
         {apprentissages && apprentissages.length > 0 && (
-          <Carte ton="encre" className="flex flex-col gap-4">
+          <Carte ton="mental" className="flex flex-col gap-4">
             <div className="flex justify-between items-baseline gap-3">
               <h2 className="font-titre text-titre-2 font-semibold">À apprendre avant de tourner</h2>
-              <p className="text-sm text-bordeaux-200 shrink-0">
+              <p className="text-sm text-sur-bordeaux shrink-0">
                 {nbAppris} sur {apprentissages.length}
               </p>
             </div>
@@ -101,7 +101,7 @@ async function FicheSujet({ params }: { params: Params }) {
                   <CaseApprise id={a.id} appris={a.appris} notion={a.notion} />
                   {a.resume && <p className="text-sm text-blanc/75 leading-relaxed">{a.resume}</p>}
                   {a.a_verifier && (
-                    <p className="text-sm text-bordeaux-200 leading-relaxed">À vérifier : {a.a_verifier}</p>
+                    <p className="text-sm text-sur-bordeaux leading-relaxed">À vérifier : {a.a_verifier}</p>
                   )}
                   {sources.length > 0 && (
                     <ul className="flex flex-col gap-1">
@@ -133,24 +133,24 @@ async function FicheSujet({ params }: { params: Params }) {
               {f.mode ? ` · ${LIBELLES.mode[f.mode as keyof typeof LIBELLES.mode]}` : ''}
             </p>
             {f.hook && (
-              <p className="font-titre text-titre-2 italic text-accent">« {f.hook} »</p>
+              <p className="font-titre text-titre-2 italic text-bordeaux">« {f.hook} »</p>
             )}
             {f.script && (
               <div>
-                <h3 className="text-sm font-medium text-accent">Script</h3>
+                <h3 className="text-sm font-medium text-bordeaux">Script</h3>
                 <p className="mt-1 text-[15px] leading-relaxed whitespace-pre-line">{f.script}</p>
               </div>
             )}
             {f.description && (
               <div>
-                <h3 className="text-sm font-medium text-accent">Description</h3>
+                <h3 className="text-sm font-medium text-bordeaux">Description</h3>
                 <p className="mt-1 text-sm leading-relaxed whitespace-pre-line text-texte-doux">
                   {f.description}
                 </p>
               </div>
             )}
             {f.hashtags && f.hashtags.length > 0 && (
-              <p className="text-sm text-accent">{f.hashtags.map((h: string) => `#${h}`).join(' ')}</p>
+              <p className="text-sm text-bordeaux">{f.hashtags.map((h: string) => `#${h}`).join(' ')}</p>
             )}
           </Carte>
         ))}
@@ -167,7 +167,7 @@ async function FicheSujet({ params }: { params: Params }) {
                 <li key={c.id}>
                   <Link
                     href={`/sujets/${c.id}`}
-                    className="flex items-center justify-between gap-3 rounded-bouton bg-surface border border-bord px-4 py-3 text-sm hover:border-accent hover:text-accent transition-colors"
+                    className="flex items-center justify-between gap-3 rounded-bouton bg-surface border border-ligne px-4 py-3 text-sm hover:border-bordeaux hover:text-bordeaux transition-colors"
                   >
                     {c.titre}
                     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8">

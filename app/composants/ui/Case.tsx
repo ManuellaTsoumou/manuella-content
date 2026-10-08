@@ -2,7 +2,7 @@
 
 import { useId, type InputHTMLAttributes, type ReactNode } from 'react'
 import { motion } from 'motion/react'
-import { DUREES, COURBES, RESSORTS } from '@/lib/animation'
+import { RESSORTS } from '@/lib/animation'
 
 type CaseProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   coche: boolean
@@ -11,39 +11,37 @@ type CaseProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   surFondSombre?: boolean
 }
 
-// Case à cocher : la coche se dessine et la case rebondit légèrement
+// Case à cocher de la maquette (22 px, coins de 7 px, coche crème sur bordeaux) avec un petit rebond
 export default function Case({ coche, children, surFondSombre = false, id, className = '', ...reste }: CaseProps) {
   const idAuto = useId()
   const idCase = id ?? idAuto
-  const couleurCase = surFondSombre
-    ? coche
-      ? 'bg-bordeaux-200 border-bordeaux-200 text-bordeaux-900'
-      : 'border-bordeaux-200/60'
-    : coche
-      ? 'bg-accent border-accent text-blanc'
-      : 'border-encre-douce/50 bg-surface'
+  const couleurs = coche
+    ? surFondSombre
+      ? 'bg-or border-or text-bordeaux-profond'
+      : 'bg-bordeaux border-bordeaux text-creme'
+    : surFondSombre
+      ? 'border-creme/40 bg-transparent'
+      : 'border-ligne bg-surface'
 
   return (
-    <label htmlFor={idCase} className={`flex gap-3 items-start cursor-pointer ${className}`}>
+    <label htmlFor={idCase} className={`flex min-h-11 cursor-pointer items-start gap-2.5 ${className}`}>
       <input id={idCase} type="checkbox" checked={coche} className="peer sr-only" {...reste} />
       <motion.span
         aria-hidden="true"
         animate={{ scale: coche ? [1, 1.15, 1] : 1 }}
         transition={RESSORTS.rebond}
-        className={`mt-0.5 size-5.5 shrink-0 rounded-md border-2 flex items-center justify-center transition-colors duration-200 peer-focus-visible:shadow-focus ${couleurCase}`}
+        className={`mt-0.5 grid size-[22px] shrink-0 place-items-center rounded-[7px] border-[1.5px] transition-colors duration-200 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-bordeaux ${couleurs}`}
       >
-        <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3.2">
+        <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
           <motion.path
-            d="M5 12.5l4.5 4.5L19 7.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            d="M20 6 9 17l-5-5"
             initial={false}
             animate={{ pathLength: coche ? 1 : 0, opacity: coche ? 1 : 0 }}
-            transition={{ duration: DUREES.base, ease: COURBES.sortie }}
+            transition={{ duration: 0.3 }}
           />
         </svg>
       </motion.span>
-      <span className="min-w-0">{children}</span>
+      <span className="min-w-0 pt-0.5">{children}</span>
     </label>
   )
 }

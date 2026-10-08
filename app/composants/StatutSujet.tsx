@@ -25,7 +25,7 @@ export default function StatutSujet({ id, statut }: { id: string; statut: string
         name="statut"
         defaultValue={statut}
         onChange={(e) => e.currentTarget.form?.requestSubmit()}
-        className="h-9 rounded-full border border-bord bg-surface-creuse px-3 text-xs font-medium text-texte outline-none transition-[border-color,box-shadow] duration-200 hover:border-accent focus:border-accent focus:shadow-focus"
+        className="h-9 rounded-full border border-ligne bg-poudre px-3 text-xs font-medium text-texte outline-none transition-[border-color,box-shadow] duration-200 hover:border-bordeaux focus:border-bordeaux focus:shadow-focus"
       >
         {STATUTS.map(([valeur, label]) => (
           <option key={valeur} value={valeur}>

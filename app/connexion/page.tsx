@@ -41,7 +41,7 @@ export default function Connexion() {
         <h1 className="font-titre text-affichage font-medium">
           Manuella
           <br />
-          <em className="text-accent">Content</em>
+          <em className="text-bordeaux">Content</em>
         </h1>
         <p className="mt-4 text-texte-doux text-base">
           Ton espace pour créer, apprendre et faire grandir ta communauté.
@@ -49,7 +49,7 @@ export default function Connexion() {
 
         <form
           onSubmit={seConnecter}
-          className="mt-10 bg-surface rounded-carte p-6 shadow-douce flex flex-col gap-4"
+          className="mt-10 bg-surface rounded-carte p-6 shadow-carte flex flex-col gap-4"
         >
           <Champ
             label="Email"

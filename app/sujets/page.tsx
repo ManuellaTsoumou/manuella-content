@@ -73,19 +73,19 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
   const pastille = (actif: boolean) =>
     `shrink-0 h-9 px-4 rounded-full text-sm flex items-center transition-colors duration-200 ${
       actif
-        ? 'bg-accent text-blanc font-medium shadow-douce'
-        : 'bg-surface border border-bord text-texte-doux hover:border-accent hover:text-accent'
+        ? 'bg-bordeaux text-blanc font-medium shadow-carte'
+        : 'bg-surface border border-ligne text-texte-doux hover:border-bordeaux hover:text-bordeaux'
     }`
 
   return (
     <main className="min-h-dvh max-w-md mx-auto pt-8 pb-32">
       <header className="px-6">
-        <p className="surtitre text-accent">
+        <p className="surtitre text-bordeaux">
           {liste.length} sujet{liste.length > 1 ? 's' : ''}
           {theme ? ` en ${nomsThemes.get(theme) ?? ''}` : ''}
         </p>
         <h1 className="mt-2 font-titre text-titre-1 font-medium">
-          Ta banque <em className="text-accent">de sujets</em>
+          Ta banque <em className="text-bordeaux">de sujets</em>
         </h1>
       </header>
 
@@ -120,7 +120,7 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
             <h2 className="font-titre text-titre-2 font-semibold">
               <Link
                 href={`/sujets/${sujet.id}`}
-                className="hover:text-accent transition-colors"
+                className="hover:text-bordeaux transition-colors"
               >
                 {sujet.titre}
               </Link>
@@ -138,7 +138,7 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
               >
                 <input type="hidden" name="id" value={sujet.id} />
                 <input type="hidden" name="decision" value="rejete" />
-                <BoutonEnvoi variante="secondaire" pleineLargeur>
+                <BoutonEnvoi variante="contour" pleineLargeur>
                   Mettre de côté
                 </BoutonEnvoi>
               </FormulaireAction>
@@ -149,7 +149,6 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
         {autres.map((sujet) => (
           <Carte
             key={sujet.id}
-            rembourrage={false}
             className="px-4 py-3 flex justify-between items-center gap-3"
           >
             <div className="min-w-0">
@@ -157,7 +156,7 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
                 <p className="text-xs text-texte-doux">{nomsThemes.get(sujet.theme_id)}</p>
               )}
               <h2 className="text-[15px] font-medium leading-snug">
-                <Link href={`/sujets/${sujet.id}`} className="hover:text-accent transition-colors">
+                <Link href={`/sujets/${sujet.id}`} className="hover:text-bordeaux transition-colors">
                   {sujet.titre}
                 </Link>
               </h2>
@@ -175,7 +174,7 @@ async function Banque({ searchParams }: { searchParams: Filtres }) {
       )}
 
       <section className="mt-6 mx-5">
-        <Carte ton="creuse">
+        <Carte ton="poudre">
           <h2 className="font-titre text-titre-2 font-semibold">Ajouter une idée</h2>
           <FormulaireAction
             action={ajouterSujet}

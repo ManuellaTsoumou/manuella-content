@@ -10,7 +10,7 @@ const FORMAT = new Intl.NumberFormat('fr-FR')
 // Écrit directement dans le DOM : aucun rendu React à chaque image.
 export default function Compteur({
   valeur,
-  duree = 1.4,
+  duree = 1.6,
   className = '',
 }: {
   valeur: number
@@ -31,7 +31,7 @@ export default function Compteur({
     }
     const controles = animate(dejaVu.current, valeur, {
       duration: duree,
-      ease: COURBES.sortie,
+      ease: COURBES.power3,
       onUpdate: (v) => {
         element.textContent = FORMAT.format(Math.round(v))
       },

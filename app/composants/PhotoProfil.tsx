@@ -62,12 +62,12 @@ export default function PhotoProfil({ userId, nom, photoUrl }: Props) {
         <img
           src={photoUrl}
           alt={`Photo de ${nom}`}
-          className="size-20 rounded-full object-cover ring-2 ring-accent ring-offset-2 ring-offset-surface"
+          className="size-20 rounded-full object-cover ring-2 ring-bordeaux ring-offset-2 ring-offset-surface"
         />
       ) : (
         <div
           aria-hidden="true"
-          className="size-20 rounded-full bg-accent-doux ring-2 ring-accent ring-offset-2 ring-offset-surface flex items-center justify-center font-titre text-4xl text-accent"
+          className="size-20 rounded-full bg-poudre ring-2 ring-bordeaux ring-offset-2 ring-offset-surface flex items-center justify-center font-titre text-4xl text-bordeaux"
         >
           {nom.charAt(0)}
         </div>
@@ -77,7 +77,7 @@ export default function PhotoProfil({ userId, nom, photoUrl }: Props) {
         type="button"
         onClick={() => champ.current?.click()}
         disabled={envoi}
-        className="text-xs text-accent underline underline-offset-2 disabled:opacity-60 min-h-8"
+        className="text-xs text-bordeaux underline underline-offset-2 disabled:opacity-60 min-h-8"
       >
         {envoi ? 'Envoi…' : photoUrl ? 'Changer ma photo' : 'Ajouter ma photo'}
       </button>

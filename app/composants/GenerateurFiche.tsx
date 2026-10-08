@@ -7,6 +7,7 @@ import { DUREES, COURBES } from '@/lib/animation'
 import { ListeDeroulante } from './ui/Champ'
 import Bouton from './ui/Bouton'
 import { useToast } from './ui/Toast'
+import { gerbe } from '@/lib/confettis'
 
 const FORMATS = [
   ['talk', 'Talk'],
@@ -46,7 +47,8 @@ export default function GenerateurFiche({ sujetId }: { sujetId: string }) {
       })
       if (!reponse.ok) throw new Error()
       router.refresh()
-      toast('Ta fiche est prête. Hook, script et sources t’attendent.', 'celebration')
+      gerbe(null, true)
+      toast('Ta fiche est prête. Hook, script et sources t’attendent.')
     } catch {
       toast('L’agent n’a pas réussi à finir la fiche. Réessaie dans un instant.', 'erreur')
     } finally {
@@ -55,8 +57,8 @@ export default function GenerateurFiche({ sujetId }: { sujetId: string }) {
   }
 
   return (
-    <section className="rounded-carte bg-bordeaux-700 text-blanc p-5 shadow-elevee flex flex-col gap-3">
-      <p className="surtitre text-bordeaux-200">Agent IA</p>
+    <section className="rounded-carte fond-couverture grain text-blanc p-5 shadow-couverture flex flex-col gap-3">
+      <p className="surtitre text-sur-bordeaux">Agent IA</p>
       <h2 className="font-titre text-titre-2 font-semibold -mt-1">Générer une fiche</h2>
       <ListeDeroulante label="Format" value={format} onChange={(e) => setFormat(e.target.value)}>
         {FORMATS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
@@ -84,8 +86,8 @@ export default function GenerateurFiche({ sujetId }: { sujetId: string }) {
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: DUREES.base, ease: COURBES.sortie }}
-            className="text-sm text-bordeaux-200"
+            transition={{ duration: DUREES.base, ease: COURBES.power3 }}
+            className="text-sm text-sur-bordeaux"
             role="status"
           >
             Recherche des sources, écriture du hook et du script : compte une à deux minutes. Tu

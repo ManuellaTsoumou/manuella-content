@@ -1,20 +1,24 @@
-import { Suspense } from 'react'
+import { Suspense, type CSSProperties } from 'react'
 import type { Metadata, Viewport } from 'next'
-import { Cormorant_Garamond, DM_Sans } from 'next/font/google'
+import { Bodoni_Moda, Jost } from 'next/font/google'
 import BarreNavigation from './composants/BarreNavigation'
 import Fournisseurs from './composants/Fournisseurs'
+import { LEOPARD_OR, LEOPARD_TEXTE } from '@/lib/leopard'
+import { COULEUR_THEME } from '@/lib/marque'
 import './globals.css'
 
-const cormorant = Cormorant_Garamond({
+// Titres, souvent en italique ; l'axe « opsz » affine le dessin selon la taille
+const bodoni = Bodoni_Moda({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
   style: ['normal', 'italic'],
-  variable: '--font-cormorant',
+  axes: ['opsz'],
+  variable: '--font-bodoni',
 })
 
-const dmSans = DM_Sans({
+// Interface
+const jost = Jost({
   subsets: ['latin'],
-  variable: '--font-dm-sans',
+  variable: '--font-jost',
 })
 
 export const metadata: Metadata = {
@@ -23,9 +27,12 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#faf6f1',
+  themeColor: COULEUR_THEME,
   viewportFit: 'cover',
 }
+
+// Le motif léopard est généré une fois côté serveur et partagé en variables CSS
+const motifs = { '--leo-or': LEOPARD_OR, '--leo-texte': LEOPARD_TEXTE } as CSSProperties
 
 export default function RootLayout({
   children,
@@ -33,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="fr" className={`${cormorant.variable} ${dmSans.variable}`}>
+    <html lang="fr" className={`${bodoni.variable} ${jost.variable}`} style={motifs}>
       <body className="antialiased">
         <Fournisseurs>
           {children}

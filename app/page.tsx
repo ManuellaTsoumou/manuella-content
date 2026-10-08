@@ -93,9 +93,9 @@ async function Accueil() {
       <Cascade className="flex flex-col gap-4">
         <Apparition className="flex justify-between items-end gap-4 px-1 mb-2">
           <div>
-            <p className="surtitre text-accent first-letter:uppercase">{date}</p>
+            <p className="surtitre text-bordeaux first-letter:uppercase">{date}</p>
             <h1 className="mt-2 font-titre text-titre-1 font-medium">
-              {salutation}, <em className="text-accent">{nom}</em>
+              {salutation}, <em className="text-bordeaux">{nom}</em>
             </h1>
           </div>
           <form action={seDeconnecter}>
@@ -127,12 +127,12 @@ async function Accueil() {
               const objectifAtteint = reseau.abonnes >= reseau.objectif
               const plateforme = NOMS_RESEAUX[reseau.plateforme] ?? reseau.plateforme
               return (
-                <div key={reseau.id} className="bg-surface-creuse rounded-bouton p-4">
+                <div key={reseau.id} className="bg-poudre rounded-bouton p-4">
                   <div className="flex justify-between items-baseline gap-2">
                     <p className="text-sm text-texte-doux">
                       {plateforme} {reseau.pseudo}
                     </p>
-                    <p className="text-xs font-medium text-accent">
+                    <p className="text-xs font-medium text-bordeaux">
                       {objectifAtteint ? 'Objectif atteint' : `${progression} %`}
                     </p>
                   </div>
@@ -143,9 +143,9 @@ async function Accueil() {
                       / {reseau.objectif.toLocaleString('fr-FR')} abonnés
                     </span>
                   </p>
-                  <div className="mt-3 h-1.5 rounded-full bg-bordeaux-100 overflow-hidden">
+                  <div className="mt-3 h-1.5 rounded-full bg-poudre overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-accent origin-left"
+                      className="h-full rounded-full bg-bordeaux origin-left"
                       style={{ width: `${progression}%` }}
                     />
                   </div>
@@ -177,7 +177,7 @@ async function Accueil() {
         </Carte>
 
         {disponibles.length > 0 && (
-          <Carte ton="creuse">
+          <Carte ton="poudre">
             <h2 className="font-titre text-titre-2 font-semibold">Ajouter un réseau</h2>
             <p className="mt-1 text-sm text-texte-doux">
               Chaque nouveau réseau commence avec l&apos;objectif des 10 000 abonnés.

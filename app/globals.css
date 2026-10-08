@@ -2,89 +2,145 @@
 
 /* ------------------------------------------------------------------
    Design system de Manuella Content
-   Magazine éditorial luxe + chaleur d'une grande sœur.
-   Aucune couleur en dur dans les composants : tout passe par ces tokens.
+   Source de vérité : design-reference/*.html
+   Règle 60/30/10 : ivoire 60 %, bordeaux 30 %, or 10 % (détails seulement).
    ------------------------------------------------------------------ */
 
+/* Valeurs qui changent avec le mode sombre (reprises des maquettes) */
+:root {
+  --fond: #faf6f1;
+  --surface: #ffffff;
+  --texte: #1e0b10;
+  --texte-doux: #75585c;
+  --ligne: #eadcd6;
+  --poudre: #f3e2df;
+  --fond-nav: rgb(250 246 241 / 0.82);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --fond: #150609;
+    --surface: #211013;
+    --texte: #fbf3ea;
+    --texte-doux: #c9b3b1;
+    --ligne: #3a2226;
+    --poudre: #3a1219;
+    --fond-nav: rgb(21 6 9 / 0.84);
+  }
+}
+
+:root[data-theme='dark'] {
+  --fond: #150609;
+  --surface: #211013;
+  --texte: #fbf3ea;
+  --texte-doux: #c9b3b1;
+  --ligne: #3a2226;
+  --poudre: #3a1219;
+  --fond-nav: rgb(21 6 9 / 0.84);
+}
+
 @theme inline {
-  --font-titre: var(--font-cormorant), Georgia, serif;
-  --font-texte: var(--font-dm-sans), system-ui, sans-serif;
+  --font-titre: var(--font-bodoni), 'Didot', 'Bodoni 72', 'Times New Roman', Georgia, serif;
+  --font-texte: var(--font-jost), 'Futura', 'Century Gothic', 'Segoe UI', system-ui, sans-serif;
+
+  /* Rôles (s'adaptent au mode sombre) */
+  --color-fond: var(--fond);
+  --color-surface: var(--surface);
+  --color-texte: var(--texte);
+  --color-texte-doux: var(--texte-doux);
+  --color-ligne: var(--ligne);
+  --color-poudre: var(--poudre);
+  --color-fond-nav: var(--fond-nav);
 }
 
 @theme {
-  /* Bordeaux, la couleur signature (700) et ses nuances */
-  --color-bordeaux-50: #fbf3f4;
-  --color-bordeaux-100: #f3e4e7;
-  --color-bordeaux-200: #e8c9cf;
-  --color-bordeaux-300: #d49aa5;
-  --color-bordeaux-500: #8a2a3d;
-  --color-bordeaux-700: #5a0f1f;
-  --color-bordeaux-800: #3d0814;
-  --color-bordeaux-900: #26040c;
-
-  /* Blanc cassé chaud */
+  /* Palette fixe des maquettes */
   --color-ivoire: #faf6f1;
-  --color-ivoire-creux: #f3ece4;
-  --color-lin: #e7ddd2;
-  --color-blanc: #fffdfb;
+  --color-blanc: #ffffff;
+  --color-encre: #1e0b10;
+  --color-creme: #fbf3ea;
+  --color-rose-poudre: #f3e2df;
+  --color-bordeaux: #6e1423;
+  --color-bordeaux-clair: #a3304a;
+  --color-bordeaux-sombre: #3a0912;
+  --color-bordeaux-profond: #2a0710;
+  --color-bordeaux-survol: #4a0d17;
+  --color-or: #e9c98f;
+  --color-or-profond: #c9a66b;
+  --color-nuit: #170e10;
+  --color-erreur: #b02a44;
 
-  /* Noir profond */
-  --color-encre: #111111;
-  --color-encre-douce: #6b5f62;
+  /* Textes posés sur une couverture bordeaux */
+  --color-sur-bordeaux: #ebcfca;
+  --color-sur-bordeaux-clair: #f6e3df;
+  --color-citation: #fbedea;
 
-  /* Champagne : réservé aux moments de célébration */
-  --color-champagne-100: #f1e3c4;
-  --color-champagne-400: #d8b878;
-  --color-champagne-700: #8a6a2b;
+  /* Matières décoratives */
+  --color-leopard: #b9894a;
+  --color-halo-rubis: rgb(196 49 78 / 0.4);
+  --color-halo-or: rgb(233 201 143 / 0.16);
+  --color-avatar: #5a1220;
 
-  /* Une couleur d'accent par pilier */
-  --color-soin: #c2697b;
-  --color-soin-pale: #f6e3e6;
-  --color-mental: #5e3a5c;
-  --color-mental-pale: #ece2ea;
-  --color-evolution: #6f8466;
-  --color-evolution-pale: #e6ebe2;
-
-  /* Rôles : c'est ce que les composants utilisent */
-  --color-fond: var(--color-ivoire);
-  --color-surface: var(--color-blanc);
-  --color-surface-creuse: var(--color-ivoire-creux);
-  --color-texte: var(--color-encre);
-  --color-texte-doux: var(--color-encre-douce);
-  --color-bord: var(--color-lin);
-  --color-accent: var(--color-bordeaux-700);
-  --color-accent-doux: var(--color-bordeaux-100);
-  --color-succes: var(--color-evolution);
-  --color-erreur: var(--color-bordeaux-500);
+  /* Points de rupture des maquettes */
+  --breakpoint-tablette: 600px;
+  --breakpoint-carte: 700px;
+  --breakpoint-large: 900px;
+  --breakpoint-bureau: 960px;
+  --breakpoint-ecran: 1000px;
 
   /* Échelle typographique */
-  --text-affichage: 3rem;
-  --text-affichage--line-height: 1.02;
-  --text-titre-1: 2.5rem;
+  --text-affichage: clamp(40px, 15vw, 112px);
+  --text-affichage--line-height: 0.95;
+  --text-titre-1: clamp(34px, 9vw, 42px);
   --text-titre-1--line-height: 1.05;
-  --text-titre-2: 1.75rem;
-  --text-titre-2--line-height: 1.15;
-  --text-titre-3: 1.375rem;
-  --text-titre-3--line-height: 1.2;
+  --text-titre-2: clamp(26px, 7vw, 32px);
+  --text-titre-2--line-height: 1.1;
+  --text-titre-3: 23px;
+  --text-titre-3--line-height: 1.15;
 
   /* Rayons */
-  --radius-champ: 12px;
-  --radius-bouton: 16px;
-  --radius-carte: 24px;
-  --radius-hero: 32px;
+  --radius-champ: 18px;
+  --radius-bouton: 20px;
+  --radius-petit: 14px;
+  --radius-carte: 26px;
+  --radius-feuille: 34px;
 
-  /* Ombres teintées bordeaux, jamais grises */
-  --shadow-douce: 0 1px 2px rgb(58 8 20 / 0.06), 0 4px 16px rgb(58 8 20 / 0.06);
-  --shadow-elevee: 0 12px 40px -12px rgb(58 8 20 / 0.25);
-  --shadow-focus: 0 0 0 4px rgb(138 42 61 / 0.18);
-  --shadow-doree: 0 0 24px rgb(216 184 120 / 0.45);
+  /* Ombres teintées bordeaux */
+  --shadow-carte: 0 6px 20px rgb(74 13 23 / 0.05);
+  --shadow-survol: 0 14px 30px rgb(74 13 23 / 0.1);
+  --shadow-bouton: inset 0 0 0 1px rgb(233 201 143 / 0.3), 0 16px 34px rgb(110 20 35 / 0.32);
+  --shadow-couverture: 0 24px 50px rgb(74 13 23 / 0.25);
+  --shadow-nav: 0 18px 40px rgb(23 14 16 / 0.16);
+  --shadow-toast: 0 18px 40px rgb(0 0 0 / 0.3);
+  --shadow-focus: 0 0 0 4px rgb(110 20 35 / 0.12);
+  --shadow-focus-or: 0 0 0 4px rgb(233 201 143 / 0.18);
+  --shadow-clair: 0 14px 30px rgb(20 2 6 / 0.35);
+  --shadow-avatar: 0 20px 50px rgb(20 2 6 / 0.45);
+  --shadow-ruban: inset 0 0 0 1px rgb(42 26 18 / 0.15);
 
-  /* Courbes (les durées vivent dans lib/animation.ts pour Motion) */
-  --ease-sortie: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-entree: cubic-bezier(0.64, 0, 0.78, 0);
+  /* Courbes des maquettes */
+  --ease-doux: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --animate-reflet: reflet 1.6s var(--ease-sortie) infinite;
+  --animate-tourne: tourne 8s linear infinite;
+  --animate-tourne-inverse: tourne 8s linear infinite reverse;
+  --animate-flamme: flamme 1.6s ease-in-out infinite;
+  --animate-reflet: reflet 1.6s var(--ease-doux) infinite;
 
+  @keyframes tourne {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes flamme {
+    0%,
+    100% {
+      transform: scale(1) rotate(-2deg);
+    }
+    50% {
+      transform: scale(1.12) rotate(3deg);
+    }
+  }
   @keyframes reflet {
     from {
       transform: translateX(-100%);
@@ -95,45 +151,181 @@
   }
 }
 
-/* Jour off : l'app entière s'adoucit */
-[data-ambiance='repos'] {
-  --color-fond: var(--color-evolution-pale);
-  --color-accent: var(--color-evolution);
-  --color-accent-doux: var(--color-ivoire);
+/* ------------------------------------------------------------------
+   Matières : grain, dégradés bordeaux, halos, reflet doré
+   ------------------------------------------------------------------ */
+
+/* Grain léger sur les surfaces colorées */
+@utility grain {
+  position: relative;
+  isolation: isolate;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.28;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
 }
 
+/* Dégradé des couvertures, de l'écran de réussite et de l'enregistreur */
+@utility fond-couverture {
+  background:
+    radial-gradient(120% 80% at 100% 0%, var(--color-bordeaux-clair) 0%, rgb(163 48 74 / 0) 55%),
+    radial-gradient(100% 80% at 0% 100%, var(--color-bordeaux-sombre) 0%, rgb(58 9 18 / 0) 60%),
+    var(--color-bordeaux);
+}
+
+/* Couverture apaisée du jour off */
+@utility fond-repos {
+  background:
+    radial-gradient(120% 80% at 100% 0%, #c98a93 0%, rgb(201 138 147 / 0) 55%),
+    radial-gradient(100% 80% at 0% 100%, #7a3a45 0%, rgb(122 58 69 / 0) 60%),
+    #9c5562;
+}
+
+/* Bouton principal (cta, Surprends-moi, raccourci vocal) */
+@utility fond-bouton {
+  background:
+    radial-gradient(120% 140% at 100% 0%, var(--color-bordeaux-clair) 0%, rgb(163 48 74 / 0) 60%),
+    var(--color-bordeaux);
+}
+
+/* Palette tonale des piliers (tuiles, cartes de suggestion, page d'un thème) */
+@utility art-soin {
+  background:
+    radial-gradient(120% 90% at 90% 0%, var(--color-bordeaux-clair) 0%, rgb(163 48 74 / 0) 55%),
+    radial-gradient(90% 80% at 0% 100%, #3a0812 0%, rgb(58 8 18 / 0) 60%),
+    var(--color-bordeaux);
+  color: var(--color-creme);
+  --sub: #f0d6cf;
+  --deco: rgb(251 243 234 / 0.2);
+  --chip: rgb(251 243 234 / 0.16);
+  --line-c: rgb(251 243 234 / 0.4);
+  --btn: #ffffff;
+  --btn-ink: var(--color-bordeaux);
+}
+
+@utility art-mental {
+  background:
+    radial-gradient(100% 80% at 85% 0%, #561526 0%, rgb(86 21 38 / 0) 60%),
+    radial-gradient(90% 80% at 0% 100%, #0e0204 0%, rgb(14 2 4 / 0) 60%),
+    var(--color-bordeaux-profond);
+  color: var(--color-creme);
+  box-shadow: inset 0 0 0 1px rgb(233 201 143 / 0.2);
+  --sub: #e2c9c4;
+  --deco: rgb(233 201 143 / 0.3);
+  --chip: rgb(251 243 234 / 0.12);
+  --line-c: rgb(251 243 234 / 0.35);
+  --btn: var(--color-or);
+  --btn-ink: var(--color-bordeaux-profond);
+}
+
+@utility art-evoluer {
+  background:
+    radial-gradient(100% 80% at 90% 0%, #fff6f3 0%, rgb(255 246 243 / 0) 55%),
+    radial-gradient(90% 90% at 0% 100%, #e9c9c4 0%, rgb(233 201 196 / 0) 60%),
+    var(--color-rose-poudre);
+  color: var(--color-bordeaux-survol);
+  box-shadow: inset 0 0 0 1px rgb(110 20 35 / 0.1);
+  --sub: #7a2e3b;
+  --deco: rgb(110 20 35 / 0.18);
+  --chip: rgb(110 20 35 / 0.08);
+  --line-c: rgb(110 20 35 / 0.25);
+  --btn: var(--color-bordeaux);
+  --btn-ink: #ffffff;
+}
+
+/* Reflet doré qui traverse un bouton */
+@utility reflet {
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(110deg, transparent 30%, rgb(233 201 143 / 0.4) 50%, transparent 70%);
+    transform: translateX(-100%);
+    animation: brille 3.4s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+/* Surtitre en capitales espacées */
 @utility surtitre {
-  font-size: 0.6875rem;
-  line-height: 1rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
 }
 
+/* Grand numéro éditorial en filigrane (contour seulement) */
+@utility filigrane {
+  font-family: var(--font-bodoni), 'Didot', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--deco);
+  pointer-events: none;
+}
+
+@keyframes brille {
+  0%,
+  55% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes derive {
+  to {
+    transform: translate(8vmax, 6vmax) scale(1.12);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Base
+   ------------------------------------------------------------------ */
+
 html {
-  background: var(--color-fond);
+  background: var(--fond);
+  scroll-padding-top: env(safe-area-inset-top, 0px);
+  -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
 }
 
 body {
-  background: var(--color-fond);
-  color: var(--color-texte);
-  font-family: var(--font-texte);
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--font-jost), 'Futura', 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: var(--color-bordeaux);
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-bordeaux);
   outline-offset: 2px;
 }
 
 ::selection {
-  background: var(--color-bordeaux-200);
-  color: var(--color-bordeaux-900);
+  background: var(--color-rose-poudre);
+  color: var(--color-bordeaux-survol);
 }
 
 /* ------------------------------------------------------------------
    Transitions entre pages (React <ViewTransition>)
-   L'ancienne page part vite, la nouvelle arrive en douceur.
    ------------------------------------------------------------------ */
 
 ::view-transition {
@@ -141,11 +333,11 @@ body {
 }
 
 ::view-transition-old(.page) {
-  animation: 160ms var(--ease-entree) both fondu-sortie;
+  animation: 160ms ease-in both fondu-sortie;
 }
 
 ::view-transition-new(.page) {
-  animation: 360ms var(--ease-sortie) 120ms both fondu-entree;
+  animation: 420ms var(--ease-expo) 120ms both fondu-entree;
 }
 
 ::view-transition-group(barre-navigation) {
@@ -171,11 +363,11 @@ body {
 @keyframes fondu-entree {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(14px);
   }
 }
 
-/* Mouvement réduit demandé par le système : on garde les fondus, on supprime les déplacements */
+/* Mouvement réduit : comme dans les maquettes, animations et transitions coupées */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(*),
   ::view-transition-new(*),
@@ -187,7 +379,7 @@ body {
   *,
   *::before,
   *::after {
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
+    animation: none !important;
+    transition: none !important;
   }
 }

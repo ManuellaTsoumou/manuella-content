@@ -1,17 +1,17 @@
-// Formes d'attente élégantes : un reflet chaud glisse dessus pendant le chargement.
+// Formes d'attente : un reflet doux glisse dessus pendant le chargement.
 // Composants serveur : utilisables directement dans les fallback de <Suspense>.
 
 export function Skeleton({ className = '' }: { className?: string }) {
   return (
-    <div aria-hidden="true" className={`relative overflow-hidden bg-surface-creuse ${className}`}>
-      <div className="absolute inset-0 animate-reflet bg-linear-to-r from-transparent via-blanc/70 to-transparent" />
+    <div aria-hidden="true" className={`relative overflow-hidden bg-poudre ${className}`}>
+      <div className="absolute inset-0 animate-reflet bg-linear-to-r from-transparent via-surface/60 to-transparent" />
     </div>
   )
 }
 
 export function SkeletonCarte({ lignes = 2 }: { lignes?: number }) {
   return (
-    <div aria-hidden="true" className="rounded-carte bg-surface p-5 shadow-douce flex flex-col gap-3">
+    <div aria-hidden="true" className="flex flex-col gap-3 rounded-carte border border-ligne bg-surface p-[18px] shadow-carte">
       <Skeleton className="h-3 w-24 rounded-full" />
       <Skeleton className="h-6 w-4/5 rounded-full" />
       {Array.from({ length: lignes }, (_, i) => (
@@ -21,16 +21,18 @@ export function SkeletonCarte({ lignes = 2 }: { lignes?: number }) {
   )
 }
 
-// Écran d'attente d'une page entière : en-tête + quelques cartes
+// Écran d'attente : une couverture bordeaux silencieuse, puis quelques cartes
 export function SkeletonPage({ texte, cartes = 3 }: { texte: string; cartes?: number }) {
   return (
-    <main className="min-h-dvh max-w-md mx-auto px-5 pt-8 pb-32">
+    <main className="mx-auto max-w-[1120px] px-4 pt-[calc(18px+env(safe-area-inset-top,0px))] pb-[140px]">
       <p className="sr-only" role="status">
         {texte}
       </p>
-      <Skeleton className="h-3 w-32 rounded-full" />
-      <Skeleton className="mt-3 h-10 w-3/4 rounded-full" />
-      <div className="mt-8 flex flex-col gap-4">
+      <div
+        aria-hidden="true"
+        className="fond-couverture grain -mx-4 -mt-[calc(18px+env(safe-area-inset-top,0px))] h-[38vh] rounded-b-feuille carte:m-0 carte:rounded-feuille"
+      />
+      <div className="mt-[30px] flex flex-col gap-3">
         {Array.from({ length: cartes }, (_, i) => (
           <SkeletonCarte key={i} lignes={i === 0 ? 3 : 2} />
         ))}
