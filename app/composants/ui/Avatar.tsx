@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import Image from 'next/image'
 import { PHOTO_MANUELLA } from '@/lib/marque'
 
@@ -10,6 +11,7 @@ type Props = {
   duree?: number
   ombre?: boolean
   priorite?: boolean
+  // Permet de réduire la taille selon l'écran (ex. max-[360px]:size-[108px])
   className?: string
 }
 
@@ -29,8 +31,8 @@ export default function Avatar({
   return (
     <div
       aria-hidden="true"
-      style={{ width: taille, height: taille, padding: grand ? 4 : 3, ...animation }}
-      className={`shrink-0 rounded-full bg-[conic-gradient(var(--color-or),var(--color-bordeaux-clair),var(--color-or-profond),var(--color-creme),var(--color-or))] animate-tourne ${
+      style={{ '--taille': `${taille}px`, padding: grand ? 4 : 3, ...animation } as CSSProperties}
+      className={`size-(--taille) shrink-0 rounded-full bg-[conic-gradient(var(--color-or),var(--color-bordeaux-clair),var(--color-or-profond),var(--color-creme),var(--color-or))] animate-tourne ${
         ombre ? 'shadow-avatar' : ''
       } ${className}`}
     >

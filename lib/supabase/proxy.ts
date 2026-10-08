@@ -29,9 +29,11 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const surPageConnexion = request.nextUrl.pathname.startsWith('/connexion')
+  // Page ouverte depuis le lien « mot de passe oublié » : accessible sans être connectée
+  const surPageMotDePasse = request.nextUrl.pathname.startsWith('/mot-de-passe')
 
   // Pas connectée : direction la page de connexion
-  if (!user && !surPageConnexion) {
+  if (!user && !surPageConnexion && !surPageMotDePasse) {
     const url = request.nextUrl.clone()
     url.pathname = '/connexion'
     return NextResponse.redirect(url)

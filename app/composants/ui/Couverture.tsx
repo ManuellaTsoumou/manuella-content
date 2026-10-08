@@ -9,6 +9,8 @@ type Props = {
   pleinEcran?: boolean
   nombreGrains?: number
   className?: string
+  // Classe du conteneur du contenu ; « contents » laisse les enfants se placer directement dans la couverture
+  classeContenu?: string
   'aria-label'?: string
 }
 
@@ -20,6 +22,7 @@ export default function Couverture({
   pleinEcran = false,
   nombreGrains = 34,
   className = '',
+  classeContenu = 'relative z-[2]',
   ...reste
 }: Props) {
   const forme = pleinEcran
@@ -40,7 +43,7 @@ export default function Couverture({
         className="pointer-events-none absolute -bottom-[22vmax] -right-[18vmax] z-0 size-[40vmax] rounded-full bg-halo-or blur-[50px] animate-[derive_22s_ease-in-out_infinite_alternate-reverse]"
       />
       <Poussiere nombre={nombreGrains} />
-      <div className="relative z-[2]">{children}</div>
+      <div className={classeContenu}>{children}</div>
     </section>
   )
 }

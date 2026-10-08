@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useRef, useState, type InputHTMLAttributes, type SelectHTMLAttributes } from 'react'
+import { useId, useRef, useState, type InputHTMLAttributes, type Ref, type SelectHTMLAttributes } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
 import { DUREES, COURBES, RESSORTS } from '@/lib/animation'
 
@@ -15,27 +15,38 @@ type ChampProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'placeholder'> & {
   label: string
   erreur?: string
   aide?: string
+  // Bordure rouge sans message propre (le message est affiché ailleurs, comme sur la connexion)
+  invalide?: boolean
+  ref?: Ref<HTMLInputElement>
 }
 
-export default function Champ({ label, erreur, aide, type = 'text', id, className = '', ...reste }: ChampProps) {
+export default function Champ({ label, erreur, aide, invalide = false, type = 'text', id, className = '', ref, ...reste }: ChampProps) {
   const idAuto = useId()
   const idChamp = id ?? idAuto
   const idMessage = `${idChamp}-message`
   const champ = useRef<HTMLInputElement>(null)
   const [visible, setVisible] = useState(false)
   const estMotDePasse = type === 'password'
+  const enErreur = invalide || !!erreur
+
+  // Garde la référence interne (pour l'œil) et transmet celle de la page
+  const relier = (element: HTMLInputElement | null) => {
+    champ.current = element
+    if (typeof ref === 'function') ref(element)
+    else if (ref) ref.current = element
+  }
 
   return (
     <div className={className}>
       <div className="relative">
         <input
-          ref={champ}
+          ref={relier}
           id={idChamp}
           type={estMotDePasse && visible ? 'text' : type}
           placeholder=" "
-          aria-invalid={erreur ? true : undefined}
+          aria-invalid={enErreur || undefined}
           aria-describedby={erreur || aide ? idMessage : undefined}
-          className={`${BASE} ${estMotDePasse ? 'pr-[58px]' : ''} ${erreur ? 'border-erreur' : 'border-ligne'}`}
+          className={`${BASE} ${estMotDePasse ? 'pr-[58px]' : ''} ${enErreur ? 'border-erreur' : 'border-ligne'}`}
           {...reste}
         />
         <label
