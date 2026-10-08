@@ -12,12 +12,14 @@ type Props = {
   duree?: number
   // Légère rotation à l'arrivée (titre de la Bibliothèque)
   rotation?: number
+  // Faux tant que l'animation doit attendre (ex. la fin de l'intro de la Bibliothèque)
+  actif?: boolean
   className?: string
 }
 
 // Un mot qui apparaît lettre par lettre : chaque lettre monte depuis sous sa ligne (masque).
 // Les lecteurs d'écran lisent le mot entier, une seule fois.
-export default function Lettres({ texte, delai = 0, ecart = 0.05, duree = 0.85, rotation = 0, className = '' }: Props) {
+export default function Lettres({ texte, delai = 0, ecart = 0.05, duree = 0.85, rotation = 0, actif = true, className = '' }: Props) {
   return (
     <span className={className}>
       <span className="sr-only">{texte}</span>
@@ -30,7 +32,7 @@ export default function Lettres({ texte, delai = 0, ecart = 0.05, duree = 0.85, 
           <motion.span
             className="inline-block will-change-transform"
             initial={{ y: '115%', rotate: rotation }}
-            animate={{ y: '0%', rotate: 0 }}
+            animate={actif ? { y: '0%', rotate: 0 } : undefined}
             transition={{ delay: delai + i * ecart, duration: duree, ease: COURBES.expo }}
           >
             {lettre === ' ' ? ' ' : lettre}

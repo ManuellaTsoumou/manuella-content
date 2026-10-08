@@ -15,6 +15,10 @@
   --ligne: #eadcd6;
   --poudre: #f3e2df;
   --fond-nav: rgb(250 246 241 / 0.82);
+  /* Taches de couleur qui dérivent derrière la Bibliothèque */
+  --tache-1: rgb(110 20 35 / 0.09);
+  --tache-2: rgb(233 201 143 / 0.22);
+  --tache-3: rgb(176 42 68 / 0.07);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -26,6 +30,9 @@
     --ligne: #3a2226;
     --poudre: #3a1219;
     --fond-nav: rgb(21 6 9 / 0.84);
+    --tache-1: rgb(110 20 35 / 0.35);
+    --tache-2: rgb(233 201 143 / 0.08);
+    --tache-3: rgb(176 42 68 / 0.2);
   }
 }
 
@@ -37,6 +44,9 @@
   --ligne: #3a2226;
   --poudre: #3a1219;
   --fond-nav: rgb(21 6 9 / 0.84);
+  --tache-1: rgb(110 20 35 / 0.35);
+  --tache-2: rgb(233 201 143 / 0.08);
+  --tache-3: rgb(176 42 68 / 0.2);
 }
 
 @theme inline {
@@ -51,6 +61,9 @@
   --color-ligne: var(--ligne);
   --color-poudre: var(--poudre);
   --color-fond-nav: var(--fond-nav);
+  --color-tache-1: var(--tache-1);
+  --color-tache-2: var(--tache-2);
+  --color-tache-3: var(--tache-3);
 }
 
 @theme {
@@ -80,6 +93,9 @@
   --color-halo-rubis: rgb(196 49 78 / 0.4);
   --color-halo-or: rgb(233 201 143 / 0.16);
   --color-avatar: #5a1220;
+  --color-bordeaux-nuit: #3e0a14;
+  --color-voile: rgb(14 8 10 / 0.84);
+  --color-lueur: rgb(255 248 235 / 0.24);
 
   /* Points de rupture des maquettes */
   --breakpoint-tablette: 600px;
@@ -119,6 +135,8 @@
   --shadow-ruban: inset 0 0 0 1px rgb(42 26 18 / 0.15);
   --shadow-feuille: 0 -20px 40px rgb(74 13 23 / 0.18);
   --shadow-check: inset 0 0 0 1px rgb(233 201 143 / 0.6);
+  --shadow-paquet: 0 26px 50px rgb(0 0 0 / 0.4);
+  --shadow-lisere-or: 0 0 0 1px rgb(233 201 143 / 0.7);
 
   /* Courbes des maquettes */
   --ease-doux: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -179,6 +197,14 @@
   background:
     radial-gradient(120% 80% at 100% 0%, var(--color-bordeaux-clair) 0%, rgb(163 48 74 / 0) 55%),
     radial-gradient(100% 80% at 0% 100%, var(--color-bordeaux-sombre) 0%, rgb(58 9 18 / 0) 60%),
+    var(--color-bordeaux);
+}
+
+/* Dos des cartes du paquet et intro de la Bibliothèque (reflet rubis) */
+@utility fond-rubis {
+  background:
+    radial-gradient(90% 70% at 80% 0%, var(--color-erreur), rgb(176 42 68 / 0) 60%),
+    radial-gradient(90% 80% at 0 100%, #2b060e, rgb(43 6 14 / 0) 60%),
     var(--color-bordeaux);
 }
 
@@ -293,6 +319,18 @@
   }
 }
 
+@keyframes derive-1 {
+  to {
+    transform: translate(12vmax, 10vmax) scale(1.15);
+  }
+}
+
+@keyframes derive-2 {
+  to {
+    transform: translate(-14vmax, -8vmax) scale(0.9);
+  }
+}
+
 /* ------------------------------------------------------------------
    Base
    ------------------------------------------------------------------ */
@@ -319,6 +357,11 @@ a {
 :focus-visible {
   outline: 2px solid var(--color-bordeaux);
   outline-offset: 2px;
+}
+
+/* L'intro de la Bibliothèque ne se joue qu'une fois par session (attribut posé avant l'affichage) */
+html[data-intro-vue] .intro-bibliotheque {
+  display: none;
 }
 
 ::selection {
