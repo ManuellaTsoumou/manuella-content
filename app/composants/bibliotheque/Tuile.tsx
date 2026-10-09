@@ -3,9 +3,8 @@
 import { useRef, type PointerEvent } from 'react'
 import { motion, useMotionValue, useReducedMotion, useSpring } from 'motion/react'
 import { COURBES } from '@/lib/animation'
-import { NOMS_PILIERS } from '@/lib/contenu'
+import { ART, NOMS_PILIERS } from '@/lib/contenu'
 import { NumeroFiligrane } from '../ui/Carte'
-import { ART } from '../accueil/Suggestions'
 import type { ThemeAffiche } from './Bibliotheque'
 
 const TAILLES = {

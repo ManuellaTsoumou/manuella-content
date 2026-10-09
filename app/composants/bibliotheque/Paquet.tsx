@@ -3,11 +3,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { gerbe, vibrer } from '@/lib/confettis'
-import { NOMS_PILIERS, nomFormat } from '@/lib/contenu'
+import { ART, NOMS_PILIERS, nomFormat } from '@/lib/contenu'
 import { prendreSujet } from '@/app/actions'
 import { NumeroFiligrane } from '../ui/Carte'
 import { useToast } from '../ui/Toast'
-import { ART } from '../accueil/Suggestions'
 import type { SujetBiblio, ThemeBiblio } from './Bibliotheque'
 
 type Tirage = { sujet: SujetBiblio; theme: ThemeBiblio | null }

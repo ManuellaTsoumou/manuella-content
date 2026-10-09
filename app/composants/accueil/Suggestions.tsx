@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { AnimatePresence, motion } from 'motion/react'
 import { COURBES } from '@/lib/animation'
 import { gerbe, vibrer } from '@/lib/confettis'
-import { NOMS_PILIERS, nomFormat } from '@/lib/contenu'
+import { ART, NOMS_PILIERS, nomFormat } from '@/lib/contenu'
 import type { SujetCandidat } from '@/lib/suggestions'
 import { prendreSujet } from '@/app/actions'
 import { NumeroFiligrane } from '../ui/Carte'
@@ -14,9 +14,6 @@ import { ARRIVEE, TeteDeSection } from './Accueil'
 
 // back.out(1.6) de GSAP
 const RETOUR = [0.34, 1.6, 0.64, 1] as const
-
-// Palette tonale de chaque pilier (classes écrites en entier pour que Tailwind les trouve)
-export const ART = { soin: 'art-soin', mental: 'art-mental', evoluer: 'art-evoluer' } as const
 
 type Props = {
   suggestions: SujetCandidat[]

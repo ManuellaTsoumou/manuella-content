@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { AnimatePresence, motion } from 'motion/react'
 import { DUREES, COURBES } from '@/lib/animation'
 import { ListeDeroulante } from './ui/Champ'
-import Bouton from './ui/Bouton'
+import Bouton, { Etincelle } from './ui/Bouton'
 import { useToast } from './ui/Toast'
 import { gerbe } from '@/lib/confettis'
 
@@ -29,10 +29,10 @@ const MODES = [
   ['sans_parole', 'Sans parole'],
 ]
 
-export default function GenerateurFiche({ sujetId }: { sujetId: string }) {
+export default function GenerateurFiche({ sujetId, formatInitial }: { sujetId: string; formatInitial?: string | null }) {
   const router = useRouter()
   const toast = useToast()
-  const [format, setFormat] = useState('talk')
+  const [format, setFormat] = useState(formatInitial && FORMATS.some(([v]) => v === formatInitial) ? formatInitial : 'talk')
   const [decor, setDecor] = useState('pendant_makeup')
   const [mode, setMode] = useState('voix_off')
   const [enCours, setEnCours] = useState(false)
@@ -57,16 +57,20 @@ export default function GenerateurFiche({ sujetId }: { sujetId: string }) {
   }
 
   return (
-    <section className="rounded-carte fond-couverture grain text-blanc p-5 shadow-couverture flex flex-col gap-3">
-      <p className="surtitre text-sur-bordeaux">Agent IA</p>
-      <h2 className="font-titre text-titre-2 font-semibold -mt-1">Générer une fiche</h2>
-      <ListeDeroulante label="Format" value={format} onChange={(e) => setFormat(e.target.value)}>
+    <section className="fond-couverture grain relative flex flex-col gap-3.5 overflow-hidden rounded-carte p-5 text-blanc shadow-couverture carte:p-6">
+      <div className="relative z-[2] flex items-center gap-2.5">
+        <Etincelle />
+        <p className="surtitre text-sur-bordeaux">Agent IA</p>
+      </div>
+      <h2 className="relative z-[2] -mt-1 font-titre text-[clamp(26px,7vw,32px)] font-normal italic">Générer une fiche</h2>
+      <p className="relative z-[2] -mt-1.5 text-[15px] text-sur-bordeaux">Hook, script, description et ce qu’il faut savoir avant de tourner.</p>
+      <ListeDeroulante className="relative z-[2]" label="Format" value={format} onChange={(e) => setFormat(e.target.value)}>
         {FORMATS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
       </ListeDeroulante>
-      <ListeDeroulante label="Décor" value={decor} onChange={(e) => setDecor(e.target.value)}>
+      <ListeDeroulante className="relative z-[2]" label="Décor" value={decor} onChange={(e) => setDecor(e.target.value)}>
         {DECORS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
       </ListeDeroulante>
-      <ListeDeroulante label="Façon de parler" value={mode} onChange={(e) => setMode(e.target.value)}>
+      <ListeDeroulante className="relative z-[2]" label="Façon de parler" value={mode} onChange={(e) => setMode(e.target.value)}>
         {MODES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
       </ListeDeroulante>
       <Bouton
@@ -76,7 +80,9 @@ export default function GenerateurFiche({ sujetId }: { sujetId: string }) {
         onClick={generer}
         chargement={enCours}
         texteChargement="L’agent recherche et écrit"
-        className="mt-1"
+        reflet
+        iconeFin={<Etincelle className="text-or" />}
+        className="relative z-[2] mt-1"
       >
         Générer la fiche
       </Bouton>
@@ -87,7 +93,7 @@ export default function GenerateurFiche({ sujetId }: { sujetId: string }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: DUREES.base, ease: COURBES.power3 }}
-            className="text-sm text-sur-bordeaux"
+            className="relative z-[2] text-sm text-sur-bordeaux"
             role="status"
           >
             Recherche des sources, écriture du hook et du script : compte une à deux minutes. Tu

@@ -16,6 +16,9 @@ export const NOMS_FORMATS: Record<Format, string> = {
   anglais: 'Anglais',
 }
 
+// Palette tonale de chaque pilier (classes écrites en entier pour que Tailwind les trouve)
+export const ART: Record<Pilier, string> = { soin: 'art-soin', mental: 'art-mental', evoluer: 'art-evoluer' }
+
 export function nomFormat(format: string | null | undefined) {
   return format && format in NOMS_FORMATS ? NOMS_FORMATS[format as Format] : null
 }
