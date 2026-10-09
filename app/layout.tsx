@@ -44,7 +44,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="fr" className={`${bodoni.variable} ${jost.variable}`} style={motifs}>
+    // suppressHydrationWarning : le script de l'intro peut poser data-intro-vue sur <html> avant React (voulu)
+    <html lang="fr" className={`${bodoni.variable} ${jost.variable}`} style={motifs} suppressHydrationWarning>
       <body className="antialiased">
         <Fournisseurs>
           {children}
