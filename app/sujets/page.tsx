@@ -8,7 +8,6 @@ import { PHOTO_MANUELLA } from '@/lib/marque'
 import TransitionPage from '../composants/animation/TransitionPage'
 import { SkeletonPage } from '../composants/ui/Skeleton'
 import Bibliotheque, {
-  CLE_INTRO,
   type DonneesBibliotheque,
   type SujetBiblio,
   type ThemeBiblio,
@@ -17,13 +16,9 @@ import Bibliotheque, {
 // Tailles des tuiles de la grille bento, dans l'ordre des thèmes (repris de la maquette)
 const TAILLES: ThemeBiblio['taille'][] = ['big', 'small', 'tall', 'small', 'wide', 'tall', 'small', 'small', 'wide', 'small', 'small']
 
-// Posé avant l'affichage : si l'intro a déjà été vue pendant cette session, elle ne clignote pas
-const SCRIPT_INTRO = `try{if(sessionStorage.getItem('${CLE_INTRO}'))document.documentElement.dataset.introVue='1'}catch(e){}`
-
 export default function Page() {
   return (
     <TransitionPage>
-      <script dangerouslySetInnerHTML={{ __html: SCRIPT_INTRO }} />
       <Suspense fallback={<SkeletonPage texte="Chargement de ta Bibliothèque…" cartes={4} />}>
         <DonneesBibliotheque />
       </Suspense>

@@ -1,10 +1,11 @@
 import { Suspense, type CSSProperties } from 'react'
 import type { Metadata, Viewport } from 'next'
+import Script from 'next/script'
 import { Bodoni_Moda, Jost } from 'next/font/google'
 import BarreNavigation from './composants/BarreNavigation'
 import Fournisseurs from './composants/Fournisseurs'
 import { LEOPARD_OR, LEOPARD_TEXTE } from '@/lib/leopard'
-import { COULEUR_THEME } from '@/lib/marque'
+import { CLE_INTRO, COULEUR_THEME } from '@/lib/marque'
 import './globals.css'
 
 // Titres, souvent en italique ; l'axe « opsz » affine le dessin selon la taille
@@ -34,6 +35,9 @@ export const viewport: Viewport = {
 // Le motif léopard est généré une fois côté serveur et partagé en variables CSS
 const motifs = { '--leo-or': LEOPARD_OR, '--leo-texte': LEOPARD_TEXTE } as CSSProperties
 
+// Lu avant l'affichage : si l'intro de la Bibliothèque a déjà été vue pendant cette session, elle ne clignote pas
+const SCRIPT_INTRO = `try{if(sessionStorage.getItem('${CLE_INTRO}'))document.documentElement.dataset.introVue='1'}catch(e){}`
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -48,6 +52,9 @@ export default function RootLayout({
             <BarreNavigation />
           </Suspense>
         </Fournisseurs>
+        <Script id="intro-bibliotheque" strategy="beforeInteractive">
+          {SCRIPT_INTRO}
+        </Script>
       </body>
     </html>
   )

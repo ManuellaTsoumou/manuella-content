@@ -5,6 +5,7 @@ import { AnimatePresence, LayoutGroup, motion } from 'motion/react'
 import { COURBES, RESSORTS } from '@/lib/animation'
 import { vibrer } from '@/lib/confettis'
 import type { Format, Pilier } from '@/lib/contenu'
+import { CLE_INTRO } from '@/lib/marque'
 import Avatar from '../ui/Avatar'
 import Cloche from '../ui/Cloche'
 import Compteur from '../ui/Compteur'
@@ -17,8 +18,6 @@ import FondVivant from './FondVivant'
 import Intro from './Intro'
 import Paquet from './Paquet'
 import Tuile from './Tuile'
-
-export const CLE_INTRO = 'manuella-intro-bibliotheque'
 
 export type ThemeBiblio = {
   id: string
