@@ -6,6 +6,7 @@ import BarreNavigation from './composants/BarreNavigation'
 import Fournisseurs from './composants/Fournisseurs'
 import { LEOPARD_OR, LEOPARD_TEXTE } from '@/lib/leopard'
 import { CLE_INTRO, COULEUR_THEME } from '@/lib/marque'
+import { ECRANS_IPHONE } from '@/lib/visuels-app'
 import './globals.css'
 
 // Titres, souvent en italique ; l'axe « opsz » affine le dessin selon la taille
@@ -25,6 +26,17 @@ const jost = Jost({
 export const metadata: Metadata = {
   title: 'Manuella Content',
   description: 'Ton espace pour créer, apprendre et faire grandir ta communauté',
+  applicationName: 'Manuella Content',
+  // Installée sur l'écran d'accueil de l'iPhone : plein écran, nom court, écran de lancement bordeaux
+  appleWebApp: {
+    capable: true,
+    title: 'Manuella',
+    statusBarStyle: 'black-translucent',
+    startupImage: ECRANS_IPHONE.map((e) => ({
+      url: `/demarrage/${e.largeur}x${e.hauteur}`,
+      media: `(device-width: ${e.largeur / e.ratio}px) and (device-height: ${e.hauteur / e.ratio}px) and (-webkit-device-pixel-ratio: ${e.ratio}) and (orientation: portrait)`,
+    })),
+  },
 }
 
 export const viewport: Viewport = {

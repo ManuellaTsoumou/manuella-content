@@ -11,3 +11,13 @@ export const CLE_INTRO = 'manuella-intro-bibliotheque'
 
 // Couleur de la barre du navigateur sur téléphone
 export const COULEUR_THEME = '#6E1423'
+
+// Palette des images générées (icônes, écran de lancement) : ces images ne lisent pas les variables CSS
+export const PALETTE_IMAGES = {
+  bordeaux: '#6E1423',
+  bordeauxClair: '#A3304A',
+  bordeauxSombre: '#3A0912',
+  or: '#E9C98F',
+  creme: '#FBF3EA',
+  roseTexte: '#EBCFCA',
+}
