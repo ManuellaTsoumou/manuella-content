@@ -2,7 +2,6 @@
 
 import { useId, type InputHTMLAttributes, type ReactNode } from 'react'
 import { motion } from 'motion/react'
-import { RESSORTS } from '@/lib/animation'
 
 type CaseProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
   coche: boolean
@@ -29,7 +28,8 @@ export default function Case({ coche, children, surFondSombre = false, id, class
       <motion.span
         aria-hidden="true"
         animate={{ scale: coche ? [1, 1.15, 1] : 1 }}
-        transition={RESSORTS.rebond}
+        // Trois étapes (petit rebond) : animation à durée fixe, un ressort n'en accepte que deux
+        transition={{ duration: 0.35, ease: 'easeOut' }}
         className={`mt-0.5 grid size-[22px] shrink-0 place-items-center rounded-[7px] border-[1.5px] transition-colors duration-200 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-bordeaux ${couleurs}`}
       >
         <svg viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
