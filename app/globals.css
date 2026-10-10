@@ -136,6 +136,7 @@
   --shadow-feuille: 0 -20px 40px rgb(74 13 23 / 0.18);
   --shadow-check: inset 0 0 0 1px rgb(233 201 143 / 0.6);
   --shadow-paquet: 0 26px 50px rgb(0 0 0 / 0.4);
+  --shadow-or: 0 10px 30px rgb(233 201 143 / 0.25);
   --shadow-lisere-or: 0 0 0 1px rgb(233 201 143 / 0.7);
 
   /* Courbes des maquettes */

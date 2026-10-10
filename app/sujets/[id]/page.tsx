@@ -181,6 +181,17 @@ async function FicheSujet({ params }: { params: Params }) {
                     <p className="text-sm text-bordeaux">{f.hashtags.map((h: string) => `#${h}`).join(' ')}</p>
                   )}
                   <div className="flex flex-wrap gap-2 border-t border-ligne pt-4">
+                    {f.script && (
+                      <Link
+                        href={`/teleprompteur/${f.id}`}
+                        className="inline-flex min-h-11 items-center gap-2 rounded-petit bg-bordeaux px-3.5 text-sm font-semibold text-creme no-underline transition-transform duration-200 hover:text-creme active:scale-[0.96]"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                          <path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5z" />
+                        </svg>
+                        Lire au téléprompteur
+                      </Link>
+                    )}
                     {f.hook && <BoutonCopier texte={f.hook} libelle="Copier le hook" message="Hook copié" />}
                     {f.script && <BoutonCopier texte={f.script} libelle="Copier le script" message="Script copié" />}
                     {(f.description || f.hashtags?.length) && (

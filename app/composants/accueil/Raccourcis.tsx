@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, type ReactNode } from 'react'
+import Link from 'next/link'
 import { AnimatePresence, motion } from 'motion/react'
 import { COURBES } from '@/lib/animation'
 import { gerbe, vibrer } from '@/lib/confettis'
@@ -8,7 +9,7 @@ import { useToast } from '../ui/Toast'
 import { ARRIVEE, TeteDeSection } from './Accueil'
 import IdeeVocale from './IdeeVocale'
 
-type Raccourci = { titre: string; detail: string; icone: ReactNode; bientot?: string }
+type Raccourci = { titre: string; detail: string; icone: ReactNode; bientot?: string; href?: string }
 
 const ICONE = 'size-[22px]'
 
@@ -16,7 +17,7 @@ const AUTRES: Raccourci[] = [
   {
     titre: 'Téléprompteur',
     detail: 'Lis ton script en filmant',
-    bientot: 'Le téléprompteur arrive bientôt',
+    href: '/teleprompteur',
     icone: (
       <svg className={ICONE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <rect x="3" y="4" width="18" height="13" rx="2" />
@@ -90,7 +91,23 @@ export default function Raccourcis() {
           </span>
         </button>
 
-        {AUTRES.map((r) => (
+        {AUTRES.map((r) =>
+          r.href ? (
+            <Link
+              key={r.titre}
+              href={r.href}
+              onClick={() => vibrer(6)}
+              className={`${BOUTON} border-ligne bg-surface text-texte no-underline`}
+            >
+              <span aria-hidden="true" className="grid size-11 place-items-center rounded-petit bg-poudre text-bordeaux">
+                {r.icone}
+              </span>
+              <span>
+                <b className="block text-[15px] font-medium">{r.titre}</b>
+                <small className="mt-0.5 block text-xs text-texte-doux">{r.detail}</small>
+              </span>
+            </Link>
+          ) : (
           <button
             key={r.titre}
             type="button"
@@ -108,7 +125,8 @@ export default function Raccourcis() {
               <small className="mt-0.5 block text-xs text-texte-doux">{r.detail}</small>
             </span>
           </button>
-        ))}
+          )
+        )}
       </motion.div>
 
       <AnimatePresence>{enregistreur && <IdeeVocale surFermer={fermerEnregistreur} />}</AnimatePresence>

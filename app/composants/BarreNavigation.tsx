@@ -70,7 +70,8 @@ const PAGES_SANS_NAVIGATION = ['/connexion', '/mot-de-passe']
 export default function BarreNavigation() {
   const chemin = usePathname()
   const toast = useToast()
-  if (PAGES_SANS_NAVIGATION.some((p) => chemin.startsWith(p))) return null
+  // Pendant la lecture au téléprompteur, tout l'écran est pour le texte
+  if (PAGES_SANS_NAVIGATION.some((p) => chemin.startsWith(p)) || chemin.startsWith('/teleprompteur/')) return null
 
   const style = 'relative flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-[3px] rounded-[20px] text-[11px] max-[360px]:text-[10px] transition-colors duration-[250ms]'
 
