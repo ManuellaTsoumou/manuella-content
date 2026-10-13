@@ -334,30 +334,34 @@
 
 /* ------------------------------------------------------------------
    Base
+   Dans la couche « base » de Tailwind : les classes (text-creme, outline-or…)
+   passent toujours devant ces valeurs par défaut.
    ------------------------------------------------------------------ */
 
-html {
-  background: var(--fond);
-  scroll-padding-top: env(safe-area-inset-top, 0px);
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
-}
+@layer base {
+  html {
+    background: var(--fond);
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
 
-body {
-  background: var(--fond);
-  color: var(--texte);
-  font-family: var(--font-jost), 'Futura', 'Segoe UI', system-ui, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  overflow-x: hidden;
-}
+  body {
+    background: var(--fond);
+    color: var(--texte);
+    font-family: var(--font-jost), 'Futura', 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
 
-a {
-  color: var(--color-bordeaux);
-}
+  a {
+    color: var(--color-bordeaux);
+  }
 
-:focus-visible {
-  outline: 2px solid var(--color-bordeaux);
-  outline-offset: 2px;
+  :focus-visible {
+    outline: 2px solid var(--color-bordeaux);
+    outline-offset: 2px;
+  }
 }
 
 /* L'intro de la Bibliothèque ne se joue qu'une fois par session (attribut posé avant l'affichage) */
