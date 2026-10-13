@@ -65,7 +65,7 @@ const ONGLETS: Onglet[] = [
   },
 ]
 
-const PAGES_SANS_NAVIGATION = ['/connexion', '/mot-de-passe']
+const PAGES_SANS_NAVIGATION = ['/connexion', '/mot-de-passe', '/bilan']
 
 export default function BarreNavigation() {
   const chemin = usePathname()

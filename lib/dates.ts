@@ -16,6 +16,15 @@ export function heureParis(instant = new Date()) {
   return Number(new Intl.DateTimeFormat('fr-FR', { timeZone: FUSEAU, hour: 'numeric', hour12: false }).format(instant))
 }
 
+// Minuit à Paris pour un jour donné, en heure universelle (gère l'heure d'été et d'hiver)
+export function minuitParis(jour: string) {
+  const minuitUtc = new Date(`${jour}T00:00:00Z`)
+  const heureAParis = Number(
+    new Intl.DateTimeFormat('en-GB', { timeZone: FUSEAU, hour: '2-digit', hour12: false }).format(minuitUtc)
+  )
+  return new Date(minuitUtc.getTime() - heureAParis * 3_600_000).toISOString()
+}
+
 // Ajoute des jours à une date « AAAA-MM-JJ » (calcul à midi UTC : pas de piège d'heure d'été)
 export function decalerJour(jour: string, nombre: number) {
   const d = new Date(`${jour}T12:00:00Z`)

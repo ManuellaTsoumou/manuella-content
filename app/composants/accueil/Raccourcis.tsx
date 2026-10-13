@@ -38,7 +38,7 @@ const AUTRES: Raccourci[] = [
   {
     titre: 'Bilan de la semaine',
     detail: 'Tes victoires en story',
-    bientot: 'Ton bilan de la semaine arrive bientôt',
+    href: '/bilan',
     icone: (
       <svg className={ICONE} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />
