@@ -1,30 +1,25 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { AnimatePresence, motion } from 'motion/react'
 import { COURBES } from '@/lib/animation'
 import { vibrer } from '@/lib/confettis'
 import { nomFormat } from '@/lib/contenu'
-import { useToast } from '../ui/Toast'
 import { ARRIVEE, TeteDeSection, type JourSemaine } from './Accueil'
 
 const ETIQUETTES = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 
 export default function Semaine({ semaine, indexAujourdhui }: { semaine: JourSemaine[]; indexAujourdhui: number }) {
-  const toast = useToast()
   const [choisi, setChoisi] = useState(Math.max(indexAujourdhui, 0))
   const jour = semaine[choisi]
 
   return (
     <section>
       <TeteDeSection titre="Ta semaine" rang={1}>
-        <button
-          type="button"
-          onClick={() => toast('Le planning complet arrive bientôt', 'info')}
-          className="min-h-11 text-[13px] text-texte-doux hover:text-bordeaux"
-        >
+        <Link href="/planning" className="inline-flex min-h-11 items-center text-[13px] text-texte-doux no-underline hover:text-bordeaux">
           Tout le planning
-        </button>
+        </Link>
       </TeteDeSection>
 
       <motion.div

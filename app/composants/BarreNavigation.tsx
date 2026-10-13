@@ -40,7 +40,7 @@ const ONGLETS: Onglet[] = [
   },
   {
     label: 'Planning',
-    bientot: 'Le planning arrive bientôt',
+    href: '/planning',
     icone: (
       <>
         <rect x="3" y="5" width="18" height="16" rx="3" />

@@ -46,6 +46,25 @@ export const PHRASES_DU_JOUR = [
   'Repose-toi quand il le faut, mais n’abandonne pas.',
   'Tu construis quelque chose de grand, une vidéo à la fois.',
   'Sois la grande sœur que tu aurais aimé avoir.',
+  // Ajoutées pour atteindre 30 phrases (une par jour du mois)
+  'Bois ton verre d’eau, redresse les épaules : on y va.',
+  'Tu n’es pas en retard. Tu es exactement là où tu construis.',
+  'Une vidéo imparfaite publiée vaut mieux qu’une parfaite jamais tournée.',
+  'Ta douceur est une force, pas une faiblesse.',
+  'Aujourd’hui, fais une chose pour ton corps et une pour ta tête.',
+  'Les chiffres montent lentement. Ton impact, lui, est déjà là.',
+  'Parle-toi comme tu parlerais à ta petite sœur.',
+  'Le doute est normal. Avance avec lui, pas derrière lui.',
+  'Chaque mot d’anglais appris t’ouvre une porte de plus.',
+  'Tu as le droit de dire non pour pouvoir dire oui à toi.',
+  'Ce n’est pas la motivation qui te porte, ce sont tes petites habitudes.',
+  'Quelqu’un va se sentir moins seule grâce à toi aujourd’hui.',
+  'Prends soin de ta peau, de ton cœur et de tes rêves. Dans cet ordre si tu veux.',
+  'Tu deviens la femme que tu voulais être, une journée à la fois.',
+  'Montre le chemin, pas seulement l’arrivée.',
+  'Ton authenticité est ton meilleur filtre.',
+  'Célèbre tes petites victoires. Elles comptent toutes.',
+  'Respire. Tu fais déjà beaucoup, et tu le fais bien.',
 ]
 
 // Paliers vers les 10 000 abonnés
