@@ -50,17 +50,32 @@ export async function rangerSujet(id: string, themeId: string): Promise<Resultat
   return { ok: !error }
 }
 
-// Nouvelle idée ajoutée directement dans un thème
-export async function creerIdee(titre: string, themeId: string | null): Promise<Resultat> {
+const FORMATS = ['one_girl_many_lives', 'talk', 'confession_astuce', 'anglais']
+
+// Nouvelle idée ajoutée directement dans un thème (ou proposée par l'agent IA, avec son format)
+export async function creerIdee(
+  titre: string,
+  themeId: string | null,
+  format: string | null = null,
+  origine: 'manuella' | 'agent' = 'manuella'
+): Promise<Resultat & { id?: string }> {
   const propre = titre.trim().replace(/\s+/g, ' ').slice(0, 300)
   if (!propre) return { ok: false }
   const supabase = await createClient()
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('sujets')
-    .insert({ titre: propre, theme_id: themeId, statut: 'idee', origine: 'manuella' })
+    .insert({
+      titre: propre,
+      theme_id: themeId,
+      statut: 'idee',
+      origine,
+      format: format && FORMATS.includes(format) ? format : null,
+    })
+    .select('id')
+    .single()
   revalidatePath('/sujets')
   revalidatePath('/')
-  return { ok: !error }
+  return { ok: !error, id: data?.id }
 }
 
 export async function ajouterSujet(formData: FormData) {
